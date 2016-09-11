@@ -1,0 +1,35 @@
+[Oo]bj/
+[Ob]in/
+
+!/vendor/bin/
+
+#### Intermediate project types
+
+# Visual Studio
+*.sln
+*.vcxproj
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.VC.db
+*.VC.opendb
+.vs/*
+*.psess
+*.vsp
+*.vspx
+*.sap
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Xcode
+*.xcodeproj/
+DerivedData/
+
+# Gmake
+Makefile
+*.make
+
+# Rust intermediates
+target/

@@ -5,6 +5,8 @@ local vec2 = require("engine.math.vec2").vec2
 local vec2_ct = vec2.ctype
 local cos = math.cos
 local sin = math.sin
+local tan = math.tan
+local abs = math.abs
 
 ffi.cdef[[
     struct matrix2d {
@@ -67,6 +69,48 @@ function matrix2d.rotation(θ, center)
         cosθ, -sinθ,
         sinθ,  cosθ,
           tx,    ty
+    )
+end
+
+function matrix2d.skew(θx, θy, center)
+    center = center or vec2_ct(0, 0)
+
+    local tanx = tan(θx)
+    local tany = tan(θy)
+    local x = center.x
+    local y = center.y
+
+    return matrix2d_ct(
+        1, tanx,
+        tany, 1,
+        -y*tany, -x*tanx
+    )
+end
+
+local function det(m)
+    return m.m11 * m.m22 - m.m12 * m.m21
+end
+matrix2d.determinant = det
+
+local function uninv_det(d)
+    return abs(d) < 0.0000001
+end
+
+function matrix2d.is_invertible(m)
+    return not uninv_det(det(m))
+end
+
+function matrix2d.inverse(m)
+    local d = det(m)
+    if uninv_det(d) then
+        return nil
+    end
+
+    return matrix2d_ct(
+        m.m22 /  d, m.m12 / -d,
+        m.m21 / -d, m.m11 /  d,
+        (m.m22*m.m31 - m.m21*m.m32) / -d,
+        (m.m12*m.m31 - m.m11*m.m32) /  d
     )
 end
 

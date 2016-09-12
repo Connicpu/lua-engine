@@ -1,8 +1,10 @@
 local ffi = require("ffi")
+local math = require("math")
 local vec2 = require("engine.math.vec2").vec2
 
-local istype = ffi.istype
 local vec2_ct = vec2.ctype
+local cos = math.cos
+local sin = math.sin
 
 ffi.cdef[[
     struct matrix2d {
@@ -24,34 +26,79 @@ function matrix2d.identity()
     )
 end
 
-function matrix2d.transform_point(m, point)
-    local lmat = istype(m, matrix2d_ct)
-    local rvec = istype(point, vec2_ct)
-    if lmat and rvec then
-        return vec2_ct(
-            point.x*m.m11 + point.y*m.m21 + m.m31,
-            point.x*m.m12 + point.y*m.m22 + m.m32
-        )
+function matrix2d.translation(x, y)
+    if y == nil then
+        x = x.x
+        y = x.y
     end
-    error("Invalid types for matrix2d:transform_point")
+
+    return matrix2d_ct(
+        1, 0,
+        0, 1,
+        x, y
+    )
+end
+
+function matrix2d.scale(scale, center)
+    center = center or vec2_ct(0, 0)
+    if type(center) == 'number' then
+        scale = vec2_ct(scale, center)
+        center = vec2_ct(0, 0)
+    end
+
+    return matrix2d_ct(
+        scale.x, 0,
+        0, scale.y,
+        center.x - scale.x * center.x, center.y - scale.y * center.y
+    )
+end
+
+function matrix2d.rotation(θ, center)
+    center = center or vec2_ct(0, 0)
+
+    local cosθ = cos(θ)
+    local sinθ = sin(θ)
+    local x = center.x
+    local y = center.y
+    local tx = x - cosθ*x - sinθ*y
+    local ty = y - cosθ*y - sinθ*x
+
+    return matrix2d_ct(
+        cosθ, -sinθ,
+        sinθ,  cosθ,
+          tx,    ty
+    )
+end
+
+function matrix2d.transform_point(m, point)
+    return vec2_ct(
+        point.x*m.m11 + point.y*m.m21 + m.m31,
+        point.x*m.m12 + point.y*m.m22 + m.m32
+    )
+end
+
+function matrix2d.transform_vector(m, vector)
+    return vec2_ct(
+        vector.x*m.m11 + vector.y*m.m21,
+        vector.x*m.m12 + vector.y*m.m22
+    )
 end
 
 function matrix2d_mt:__tostring()
-    return "<TODO matrix2d>"
+    return string.format(
+        "[%f, %f, 0]\n[%f, %f, 0]\n[%f, %f, 1]",
+        self.m11, self.m12,
+        self.m21, self.m22,
+        self.m31, self.m32
+    )
 end
 
-function matrix2d_mt.__mul(lhs, rhs)
-    local lmat = istype(lhs, matrix2d_ct)
-    local rmat = istype(rhs, matrix2d_ct)
-
-    if lmat and rmat then
-        return matrix2d_ct(
-            m1.m11 * m2.m11 + m1.m12 * m2.m21,          m1.m11 * m2.m12 + m1.m12 * m2.m22,
-            m2.m11 * m1.m21 + m2.m21 * m1.m22,          m2.m12 * m1.m21 + m1.m22 * m2.m22,
-            m2.m31 + m2.m11 * m1.m31 + m2.m21 * m1.m32, m2.m32 + m2.m12 * m1.m31 + m2.m22 * m1.m32
-        )
-    end
-    error("Invalid types for matrix2d:__mul")
+function matrix2d_mt.__mul(m1, m2)
+    return matrix2d_ct(
+        m1.m11 * m2.m11 + m1.m12 * m2.m21,          m1.m11 * m2.m12 + m1.m12 * m2.m22,
+        m2.m11 * m1.m21 + m2.m21 * m1.m22,          m2.m12 * m1.m21 + m1.m22 * m2.m22,
+        m2.m31 + m2.m11 * m1.m31 + m2.m21 * m1.m32, m2.m32 + m2.m12 * m1.m31 + m2.m22 * m1.m32
+    )
 end
 
 matrix2d_ct = ffi.metatype("struct matrix2d", matrix2d_mt)

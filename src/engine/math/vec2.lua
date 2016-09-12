@@ -1,7 +1,6 @@
 local ffi = require("ffi")
 local math = require("math")
 
-local istype = ffi.istype
 local sqrt = math.sqrt
 
 ffi.cdef[[
@@ -24,12 +23,7 @@ function vec2_class:__call(x, y)
 end
 
 function vec2.dot(lhs, rhs)
-    local lvec = istype(vec2_ct, lhs)
-    local rvec = istype(vec2_ct, rhs)
-    if lvec and rvec then
-        return lhs.x * rhs.x + lhs.y * rhs.y
-    end
-    error("Invalid types for vec2:dot")
+    return lhs.x * rhs.x + lhs.y * rhs.y
 end
 
 function vec2:len2()
@@ -48,54 +42,35 @@ function vec2_mt:__tostring()
 end
 
 function vec2_mt.__add(lhs, rhs)
-    local lvec = istype(vec2_ct, lhs)
-    local rvec = istype(vec2_ct, rhs)
-    if lvec and rvec then
-        return vec2_ct(lhs.x + rhs.x, lhs.y + rhs.y)
-    end
-    error("Invalid types for vec2:__add")
+    return vec2_ct(lhs.x + rhs.x, lhs.y + rhs.y)
 end
 
 function vec2_mt.__sub(lhs, rhs)
-    local lvec = istype(vec2_ct, lhs)
-    local rvec = istype(vec2_ct, rhs)
-    if lvec and rvec then
-        return vec2_ct(lhs.x - rhs.x, lhs.y - rhs.y)
-    end
-    error("Invalid types for vec2:__sub")
+    return vec2_ct(lhs.x - rhs.x, lhs.y - rhs.y)
 end
 
 function vec2_mt.__mul(lhs, rhs)
-    local lvec = istype(vec2_ct, lhs)
-    local rvec = istype(vec2_ct, rhs)
-    if lvec and rvec then
-        return vec2_ct(lhs.x * rhs.x, lhs.y * rhs.y)
-    elseif lvec and type(rhs) == 'number' then
+    if type(rhs) == 'number' then
         return vec2_ct(lhs.x * rhs, lhs.y * rhs)
-    elseif rvec and type(lhs) == 'number' then
+    elseif type(lhs) == 'number' then
         return vec2_ct(lhs * rhs.x, lhs * rhs.y)
+    else
+        return vec2_ct(lhs.x * rhs.x, lhs.y * rhs.y)
     end
-    error("Invalid types for vec2:__mul")
 end
 
 function vec2_mt.__div(lhs, rhs)
-    local lvec = istype(vec2_ct, lhs)
-    local rvec = istype(vec2_ct, rhs)
-    if lvec and rvec then
-        return vec2_ct(lhs.x / rhs.x, lhs.y / rhs.y)
-    elseif lvec and type(rhs) == 'number' then
+    if type(rhs) == 'number' then
         return vec2_ct(lhs.x / rhs, lhs.y / rhs)
-    elseif rvec and type(lhs) == 'number' then
+    elseif type(lhs) == 'number' then
         return vec2_ct(lhs / rhs.x, lhs / rhs.y)
+    else
+        return vec2_ct(lhs.x / rhs.x, lhs.y / rhs.y)
     end
-    error("Invalid types for vec2:__div")
 end
 
 function vec2_mt:__pow(power)
-    if type(power) == 'number' then
-        return vec2_ct(self.x ^ power, self.y ^ power)
-    end
-    error("Invalid types for vec2:__pow")
+    return vec2_ct(self.x ^ power, self.y ^ power)
 end
 
 function vec2_mt:__unm()

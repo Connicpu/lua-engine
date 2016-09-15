@@ -8,8 +8,15 @@ ffi.cdef[[
         matrix2d transform;
     };
 
-    renderer_scene *renderer_create_scene(renderer_device *device);
-    void renderer_free_scene(renderer_scene *scene);
+    scene *rd_create_scene(rd_device *device);
+    void rd_free_scene(scene *scene);
 
-    sprite_handle renderer_create_sprite(renderer_scene *scene, sprite_params *params);
+    sprite_handle rd_create_sprite(scene *scene, sprite_params *params);
+    void rd_destroy_sprite(scene *scene, sprite_handle sprite);
+
+    void rd_get_sprite_transform(scene *scene, sprite_handle sprite, matrix2d *transform);
+    void rd_set_sprite_transform(scene *scene, sprite_handle sprite, const matrix2d *transform);
+
+    void rd_get_sprite_tint(scene *scene, sprite_handle sprite, color *tint);
+    void rd_set_sprite_tint(scene *scene, sprite_handle sprite, const color *tint);
 ]]

@@ -3,10 +3,10 @@ local ffi = require("engine.graphics.renderer.typedefs")
 ffi.cdef[[
     struct renderer_error {
         int system_code;
-
-        size_t message_len;
-        char message[500];
+        char message[128];
     };
 
-    bool renderer_last_error(renderer_error *error);
+    // NOTE: The state is thread-local
+    bool rd_last_error(renderer_error *error);
+    void rd_clear_error();
 ]]

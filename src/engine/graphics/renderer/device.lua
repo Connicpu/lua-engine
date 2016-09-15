@@ -1,10 +1,11 @@
 local ffi = require("engine.graphics.renderer.typedefs")
 
 ffi.cdef[[
-    struct renderer_device_params {
-        int expected_monitor;
+    struct device_params {
+        instance *inst;
+        output_id preferred_output;
     };
 
-    renderer_device *renderer_create_device(const renderer_device_params *params);
-    void renderer_free_device(renderer_device *device);
+    device *rd_create_device(const device_params *params);
+    void rd_free_device(device *dev);
 ]]

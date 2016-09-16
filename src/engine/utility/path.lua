@@ -352,6 +352,47 @@ end
 function Path.create_dir(path)
     path = pathify(path)
     return plib.path_create_dir(path)
+end
+
+function Path.create_dir_all(path)
+    path = pathify(path)
+    return plib.path_create_dir_all(path)
+end
+
+function Path.remove_dir(path)
+    path = pathify(path)
+    return plib.path_remove_dir(path)
+end
+
+function Path.remove_dir_all(path)
+    path = pathify(path)
+    return plib.path_remove_dir_all(path)
+end
+
+function Path.remove_file(path)
+    path = pathify(path)
+    return plib.path_remove_file(path)
+end
+
+function Path.rename(from, to)
+    from, to = pathify(from), pathify(to)
+    return plib.path_rename(from, to)
+end
+
+function Path.hard_link(src, dst)
+    src, dst = pathify(src), pathify(dst)
+    return plib.path_hard_link(src, dst)
+end
+
+function Path.symlink_file(src, dst)
+    src, dst = pathify(src), pathify(dst)
+    return plib.path_symlink_file(src, dst)
+end
+
+function Path.symlink_dir(src, dst)
+    src, dst = pathify(src), pathify(dst)
+    return plib.path_symlink_dir(src, dst)
+end
 
 function Path_mt:__tostring()
     return self:to_str()

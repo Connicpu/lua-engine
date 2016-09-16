@@ -22,6 +22,7 @@
 _ReSharper*/
 *.[Rr]e[Ss]harper
 *.DotSettings.user
+.vscode/
 
 # Xcode
 *.xcodeproj/
@@ -33,3 +34,7 @@ Makefile
 
 # Rust intermediates
 target/
+
+# Fucking macs
+.DS_Store
+

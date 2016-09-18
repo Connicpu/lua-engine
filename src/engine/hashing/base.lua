@@ -8,7 +8,7 @@ local function build_temp(ct)
     ct = ffi.typeof(ct)
     local size = ffi.sizeof(ct)
     local union = ffi.typeof("union{$ v; uint8_t a[$];}", ct, size)
-    return ffi.new(union), size
+    return ffi.new(union)
 end
 
 local i8 = build_temp("int8_t")
@@ -20,7 +20,7 @@ local u16 = build_temp("uint16_t")
 local u32 = build_temp("uint32_t")
 local u64 = build_temp("uint64_t")
 local f32 = build_temp("float")
-local f64 = build_temp
+local f64 = build_temp("double")
 
 local function pun(temp, v)
     temp.v = v
@@ -30,16 +30,16 @@ end
 function module.impl(hasher)
     -- Signed Integers
     function hasher:write_i8(v)
-        self:write(pun(i8, v))
+        self:write(pun(i8, v), 1)
     end
     function hasher:write_i16(v)
-        self:write(pun(i16, v))
+        self:write(pun(i16, v), 2)
     end
     function hasher:write_i32(v)
-        self:write(pun(i32, v))
+        self:write(pun(i32, v), 4)
     end
     function hasher:write_i64(v)
-        self:write(pun(i64, v))
+        self:write(pun(i64, v), 8)
     end
     
     -- Unsigned integers
@@ -54,6 +54,14 @@ function module.impl(hasher)
     end
     function hasher:write_u64(v)
         self:write(pun(u64, v), 8)
+    end
+
+    -- Floating point numbers
+    function hasher:write_f32(v)
+        self:write(pun(f32, v), 4)
+    end
+    function hasher:write_f64(v)
+        self:write(pun(f64, v), 8)
     end
 
     -- Other

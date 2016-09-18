@@ -2,7 +2,7 @@ local ffi = require("ffi")
 local bit = require("bit")
 local fnv1a = require("engine.hashing.fnv1a")
 
-local bit_lsr = bit.brshift
+local bit_lsr = bit.rshift
 local bit_and = bit.band
 local bit_or = bit.bor
 
@@ -12,15 +12,10 @@ ffi.cdef[[
 ]]
 
 local ffi_new = ffi.new
+local ffi_cast = ffi.cast
 local C = ffi.C
 
 local function build_type(key_t, value_t, hasher_t, needs_dtor)
-    if hasher_t == nil then
-        hasher_t = fnv1a.builder
-    end
-    if needs_dtor == nil then
-        needs_dtor = true
-    end
 
     local entry_t = ffi.typeof([[
         struct {
@@ -29,6 +24,14 @@ local function build_type(key_t, value_t, hasher_t, needs_dtor)
             uint32_t hash;
         }
     ]], key_t, value_t)
+    local const_entry_t = ffi.typeof([[
+        struct {
+            $ const key;
+            $ value;
+            const uint32_t hash;
+        }
+    ]], key_t, value_t)
+    local const_entry_ref_t = ffi.typeof("$ &", const_entry_t)
     local hashmap_t = ffi.typeof([[
         struct {
             $ hash_state;
@@ -52,23 +55,23 @@ local function build_type(key_t, value_t, hasher_t, needs_dtor)
 
     if needs_dtor == true then
         function HashMap_mt:__gc()
-            for k, v in pairs(self) do
-                ffi_new(key_t, k)
-                ffi_new(value_t, v)
+            for e in pairs(self) do
+                ffi_new(key_t, e.key)
+                ffi_new(value_t, e.value)
             end
             C.free(self.data)
         end
     elseif needs_dtor == 'key' then
         function HashMap_mt:__gc()
-            for k, v in pairs(self) do
-                ffi_new(key_t, k)
+            for e in pairs(self) do
+                ffi_new(key_t, e.key)
             end
             C.free(self.data)
         end
     elseif needs_dtor == 'value' then
         function HashMap_mt:__gc()
-            for k, v in pairs(self) do
-                ffi_new(value_t, v)
+            for e in pairs(self) do
+                ffi_new(value_t, e.value)
             end
             C.free(self.data)
         end
@@ -112,7 +115,7 @@ local function build_type(key_t, value_t, hasher_t, needs_dtor)
     local temp_entry = ffi.new(ffi.typeof("$[2]", entry_t))
 
     local function insert_helper(self, hash, key, value)
-        local pos = desired_pos(hash)
+        local pos = desired_pos(self, hash)
         local dist = 0
 
         temp_entry[0].key = key
@@ -149,6 +152,10 @@ local function build_type(key_t, value_t, hasher_t, needs_dtor)
     end
 
     local function lookup_index(self, key)
+        if self.cap == 0 then
+            return nil
+        end
+
         local hash = hash_key(self, key)
         local pos = desired_pos(self, hash)
         local dist = 0
@@ -200,6 +207,20 @@ local function build_type(key_t, value_t, hasher_t, needs_dtor)
         value = ffi.gc(value, nil)
 
         -- Remove old value
+        local old_key, old_value = self:remove(key)
+
+        if self.len >= self.cap*0.95 then
+            grow(self)
+        end
+
+        local hash = hash_key(self, key)
+        insert_helper(self, hash, key, value)
+        self.len = self.len + 1
+
+        return old_key, old_value
+    end
+
+    function HashMap:remove(key)
         local old = lookup_index(self, key)
         local old_key, old_value
         if old then
@@ -208,17 +229,118 @@ local function build_type(key_t, value_t, hasher_t, needs_dtor)
             old_value = ffi_new(value_t, e.value)
             erase(self, old)
         end
-
-        if self.len >= self.cap*0.95 then
-            grow(self)
-        end
-
-        local hash = hash_key(self, key)
-        insert_helper(self, hash, key, value)
-
         return old_key, old_value
     end
 
+    function HashMap:find(key)
+        local idx = lookup_index(self, key)
+        if idx then
+            return ffi_cast(const_entry_ref_t, self.data[idx])
+        end
+    end
+
+    function HashMap:get(key)
+        local idx = lookup_index(self, key)
+        if idx then
+            return self.data[idx].value
+        end
+    end
+
+    local iterstate_t
+
+    local function iter(state)
+        local self = state.map[0]
+        local e = self.data[state.pos]
+        while state.pos < self.cap and (e.hash == 0 or is_deleted(e.hash)) do
+            state.pos = state.pos + 1
+            e = self.data[state.pos]
+        end
+        if state.pos >= self.cap then
+            return nil
+        end
+
+        state.pos = state.pos + 1
+        return ffi_cast(const_entry_ref_t, e)
+    end
+
+    function HashMap_mt:__pairs()
+        local state = iterstate_t(self, 0)
+        return iter, state, nil
+    end
+
     HashMap_ct = ffi.metatype(hashmap_t, HashMap_mt)
+    iterstate_t = ffi.typeof([[
+        struct {
+            $ *map;
+            uint32_t pos;
+        }
+    ]], HashMap_ct)
+
     return HashMap_ct
 end
+
+local HashMap_mt = {}
+local HashMap = setmetatable({}, HashMap_mt)
+
+local key_t_cache = {}
+local KeyType_mt = {}
+
+local ValueType = {}
+local ValueType_mt = { __index = ValueType }
+
+function HashMap_mt:__index(key_t)
+    if key_t_cache[key_t] then
+        return key_t_cache[key_t]
+    end
+
+    local key_type = setmetatable({
+        __key_t = key_t,
+        __value_t_cache = {}
+    }, KeyType_mt)
+
+    key_t_cache[key_t] = key_type
+    return key_type
+end
+
+function KeyType_mt:__index(value_t)
+    if self.__value_t_cache[value_t] then
+        return self.__value_t_cache[value_t]
+    end
+
+    local value_type = setmetatable({
+        __key_t = self.__key_t,
+        __value_t = value_t,
+        __cache = {}
+    }, ValueType_mt)
+    
+    self.__value_t_cache[value_t] = value_type
+    return value_type
+end
+
+function ValueType_mt:__call()
+    local t = self:type()
+    return t()
+end
+
+function ValueType:type(hasher_t, needs_dtor)
+    if hasher_t == nil then
+        hasher_t = fnv1a.builder
+    end
+    if needs_dtor == nil then
+        needs_dtor = true
+    end
+
+    if not self.__cache[hasher_t] then
+        self.__cache[hasher_t] = {
+            [true] = build_type(self.__key_t, self.__value_t, hasher_t, true),
+            ['key'] = build_type(self.__key_t, self.__value_t, hasher_t, 'key'),
+            ['value'] = build_type(self.__key_t, self.__value_t, hasher_t, 'value'),
+            [false] = build_type(self.__key_t, self.__value_t, hasher_t, false),
+        }
+    end
+
+    return self.__cache[hasher_t][needs_dtor]
+end
+
+return HashMap
+

@@ -24,5 +24,5 @@ pushd src/native-helpers/path-helper
 rustup run $Rust64 cargo clean
 rustup run $Rust64 cargo build --release
 popd
-cp lsrc/native-helpers/path-helper/target/release/libpath_helper.* bin/macosx/x64
+cp src/native-helpers/path-helper/target/release/libpath_helper.* bin/macosx/x64
 

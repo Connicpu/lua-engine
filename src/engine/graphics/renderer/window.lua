@@ -1,6 +1,6 @@
 local ffi = require("engine.graphics.renderer.typedefs")
 
-ffi.cdef[[
+ffi.rd_header.cdef[[
     struct adapter_output {
         output_id id;
         uint64_t device_memory;
@@ -11,7 +11,7 @@ ffi.cdef[[
         windowed = 0,
         borderless = 1,
         fullscreen = 2,
-    }
+    };
 
     struct window_params {
         window_state state;

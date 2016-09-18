@@ -1,6 +1,6 @@
 local ffi = require("engine.graphics.renderer.typedefs")
 
-ffi.cdef[[
+ffi.rd_header.cdef[[
     struct renderer_error {
         int system_code;
         char message[128];

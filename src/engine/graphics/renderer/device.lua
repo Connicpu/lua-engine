@@ -1,6 +1,6 @@
 local ffi = require("engine.graphics.renderer.typedefs")
 
-ffi.cdef[[
+ffi.rd_header.cdef[[
     struct device_params {
         instance *inst;
         output_id preferred_output;

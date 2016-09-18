@@ -1,6 +1,6 @@
 local ffi = require("engine.graphics.renderer.typedefs")
 
-ffi.cdef[[
+ffi.rd_header.cdef[[
     bool rd_poll_window_event(window *window, window_event *event);
     void rd_free_window_event(window_event *event);
 
@@ -31,57 +31,6 @@ ffi.cdef[[
     enum element_state {
         ELEM_PRESSED,
         ELEM_RELEASED,
-    };
-
-    struct window_event {
-        event_type event;
-        union {
-            struct {
-                uint32_t width, height;
-            } window_resized;
-
-            struct {
-                int32_t x, y;
-                uint32_t width, height;
-            } window_moved;
-
-            struct {
-                bool state;
-            } window_focus;
-
-            struct {
-                in32_t x, y;
-
-                size_t path_len;
-                char *path;
-            } dropped_file;
-
-            struct {
-                uint32_t codepoint;
-            } char_input;
-
-            struct {
-                element_state state;
-                uint8_t scan_code;
-
-                bool has_vk;
-                virtual_key_code virtual_key;
-            } key_input;
-            
-            struct {
-                int32_t x, y;
-            } mouse_moved;
-
-            struct {
-                mouse_button button;
-                element_state state;
-                int32_t x, y;
-            } mouse_input;
-
-            struct {
-                float dx, dy;
-            } mouse_wheel;
-        };
     };
 
     enum virtual_key_code
@@ -244,6 +193,56 @@ ffi.cdef[[
         VK_WebSearch,
         VK_WebStop,
         VK_Yen,
+    };
+
+    struct window_event {
+        event_type event;
+        union {
+            struct {
+                uint32_t width, height;
+            } window_resized;
+
+            struct {
+                int32_t x, y;
+                uint32_t width, height;
+            } window_moved;
+
+            struct {
+                bool state;
+            } window_focus;
+
+            struct {
+                int32_t x, y;
+
+                size_t path_len;
+                char *path;
+            } dropped_file;
+
+            struct {
+                uint32_t codepoint;
+            } char_input;
+
+            struct {
+                element_state state;
+                virtual_key_code virtual_key;
+                bool has_vk;
+                uint8_t scan_code;
+            } key_input;
+            
+            struct {
+                int32_t x, y;
+            } mouse_moved;
+
+            struct {
+                mouse_button button;
+                element_state state;
+                int32_t x, y;
+            } mouse_input;
+
+            struct {
+                float dx, dy;
+            } mouse_wheel;
+        };
     };
 ]]
 

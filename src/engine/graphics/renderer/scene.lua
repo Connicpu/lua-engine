@@ -1,14 +1,14 @@
 local ffi = require("engine.graphics.renderer.typedefs")
 
-ffi.cdef[[
+ffi.rd_header.cdef[[
     struct sprite_params {
-        bool translucent;
-        bool static;
+        bool is_translucent;
+        bool is_static;
         color tint;
         matrix2d transform;
     };
 
-    scene *rd_create_scene(rd_device *device);
+    scene *rd_create_scene(device *device);
     void rd_free_scene(scene *scene);
 
     sprite_handle rd_create_sprite(scene *scene, sprite_params *params);

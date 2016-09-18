@@ -1,4 +1,4 @@
-workspace "CnnrEngine"
+workspace "lua-engine"
     toolset "clang"
     buildoptions { "-std=c++14" }
     objdir "obj/%{cfg.system}/%{prj.name}/%{cfg.platform}/%{cfg.buildcfg}"
@@ -8,7 +8,7 @@ workspace "CnnrEngine"
     libdirs {
         "$(CONNORLIB_HOME)/bin/%{cfg.system}/%{cfg.platform}"
     }
-    includedirs {
+    sysincludedirs {
         "$(CONNORLIB_HOME)/include",
         "src"
     }

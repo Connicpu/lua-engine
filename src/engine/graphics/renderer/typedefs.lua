@@ -1,6 +1,6 @@
-local ffi = require("ffi")
+local ffi = require("engine.graphics.header_builder")
 
-ffi.cdef[[
+ffi.rd_header.cdef[[
     // Mathlib structs
     typedef struct vec2 vec2;
     typedef struct matrix2d matrix2d;

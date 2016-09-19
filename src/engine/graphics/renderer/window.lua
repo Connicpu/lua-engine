@@ -2,6 +2,10 @@ local ffi = require("engine.graphics.renderer.typedefs")
 
 ffi.rd_header.cdef[[
     struct adapter_output {
+        // An index that can be used for looking up this adapter later,
+        // but only within this process on this specific instance.
+        uint32_t process_index;
+
         output_id id;
         uint64_t device_memory;
         char device_name[64];

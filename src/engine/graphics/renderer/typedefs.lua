@@ -18,6 +18,7 @@ ffi.rd_header.cdef[[
 
     // Render Target
     typedef struct render_target render_target;
+    typedef struct framebuffer framebuffer;
 
     // Window
     typedef struct window window;
@@ -32,6 +33,10 @@ ffi.rd_header.cdef[[
     typedef enum mouse_button mouse_button;
     typedef enum element_state element_state;
     typedef enum virtual_key_code virtual_key_code;
+
+    // Texture
+    typedef struct texture_set texture_set;
+    typedef struct texture texture;
 
     // Scene
     typedef struct scene scene;

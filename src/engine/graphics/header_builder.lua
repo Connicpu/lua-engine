@@ -14,8 +14,22 @@ function ffi.rd_header.begin()
     rd_file:write[[
         #pragma once
         #ifdef __cplusplus
+        #include <stdint.h>
         extern "C" {
         #endif
+
+        struct vec2 {
+            float x;
+            float y;
+        };
+        struct matrix2d {
+            float m11, m12;
+            float m21, m22;
+            float m31, m32;
+        };
+        struct color {
+            float r, g, b, a;
+        };
     ]]
 end
 

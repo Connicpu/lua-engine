@@ -6,8 +6,10 @@
 #### Intermediate project types
 
 # Visual Studio
+ipch/
 *.sln
 *.vcxproj
+*.vcxproj.filters
 *.suo
 *.user
 *.userosscache

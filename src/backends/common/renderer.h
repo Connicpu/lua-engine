@@ -1,8 +1,23 @@
         #pragma once
         #ifdef __cplusplus
+        #include <stdint.h>
         extern "C" {
         #endif
-        // Mathlib structs
+
+        struct vec2 {
+            float x;
+            float y;
+        };
+        struct matrix2d {
+            float m11, m12;
+            float m21, m22;
+            float m31, m32;
+        };
+        struct color {
+            float r, g, b, a;
+        };
+    
+    // Mathlib structs
     typedef struct vec2 vec2;
     typedef struct matrix2d matrix2d;
     typedef struct color color;
@@ -42,13 +57,18 @@
     // Text
     typedef struct text_object *text_handle;
     typedef struct text_params text_params;
+
+
     struct device_params {
         instance *inst;
         output_id preferred_output;
+        bool enable_debug_mode;
     };
 
     device *rd_create_device(const device_params *params);
     void rd_free_device(device *dev);
+
+
     struct renderer_error {
         int system_code;
         char message[128];
@@ -57,6 +77,8 @@
     // NOTE: The state is thread-local
     bool rd_last_error(renderer_error *error);
     void rd_clear_error();
+
+
     bool rd_poll_window_event(window *window, window_event *event);
     void rd_free_window_event(window_event *event);
 
@@ -300,9 +322,15 @@
             } mouse_wheel;
         };
     };
+
+
     instance *rd_create_instance();
-    void rd_free_instance(instance *instance);
+    void rd_free_instance(instance *inst);
+
+
     render_target *rd_create_framebuffer(device *dev, uint32_t width, uint32_t height);
+
+
     struct sprite_params {
         bool is_translucent;
         bool is_static;
@@ -321,6 +349,8 @@
 
     void rd_get_sprite_tint(scene *scene, sprite_handle sprite, color *tint);
     void rd_set_sprite_tint(scene *scene, sprite_handle sprite, const color *tint);
+
+
     struct adapter_output {
         output_id id;
         uint64_t device_memory;
@@ -350,6 +380,7 @@
 
     render_target *rd_get_window_target(window *win);
     void rd_get_window_dpi(window *win, float *dpix, float *dpiy);
+
         #ifdef __cplusplus
         }
         #endif

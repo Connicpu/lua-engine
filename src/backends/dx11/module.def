@@ -1,2 +1,47 @@
 EXPORTS
     rd_create_instance
+	rd_free_instance
+
+	rd_create_device
+	rd_free_device
+
+	rd_last_error
+	rd_clear_error
+
+	rd_poll_window_event
+	rd_free_window_event
+
+	rd_create_framebuffer
+	rd_free_framebuffer
+
+    rd_create_texture_set
+    rd_free_texture_set
+    rd_get_texture_set_size
+    rd_get_texture_set_count
+    rd_is_texture_set_streaming
+    rd_is_texture_set_pixel_art
+    rd_set_texture_set_pixel_art
+    rd_get_texture
+    rd_get_texture_set
+    rd_update_texture
+
+	rd_create_scene
+	rd_free_scene
+	rd_create_sprite
+	rd_destroy_sprite
+	rd_get_sprite_uv
+    rd_set_sprite_uv
+    rd_get_sprite_layer
+    rd_set_sprite_layer
+    rd_get_sprite_texture
+    rd_set_sprite_texture
+	rd_get_sprite_transform
+	rd_set_sprite_transform
+	rd_get_sprite_tint
+	rd_set_sprite_tint
+
+	rd_get_outputs
+	rd_create_window
+	rd_free_window
+	rd_get_window_target
+	rd_get_window_dpi

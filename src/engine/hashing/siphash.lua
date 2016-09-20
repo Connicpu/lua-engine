@@ -111,7 +111,9 @@ function SipHash:reset()
 end
 
 function SipHash13:_c_rounds(m)
+    self.state.v3 = bit_xor(state.v3, m)
     compress(self.state)
+    self.state.v0 = bit_xor(state.v0, m)
 end
 function SipHash13:_d_rounds()
     compress(self.state)

@@ -115,6 +115,26 @@ local function build_type(value_t, needs_dtor)
             return nil
         end
         local tmp = ffi_new(value_t, self.data[i - 1])
-        
+        if i ~= self.len then
+            C.memmove(self.data + i - 1, self.data + i, self.len - i)
+        end
+        self.len = self.len - 1
+        return tmp
     end
+
+    function Vector:front()
+        if self.len > 0 then
+            return self.data[0]
+        end
+    end
+
+    function Vector:back()
+        if self.len > 0 then
+            return self.data[self.len - 1]
+        end
+    end
+
+    Vector_ct = ffi.metatype(vector_t, vector_mt)
+
+    return Vector_ct
 end

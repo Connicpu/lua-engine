@@ -17,7 +17,8 @@ workspace "lua-engine"
 
     vpaths {
         Headers = "**.h",
-        Source = { "**.cpp", "**.c", "**.m", "**.mm" }
+        Source = { "**.cpp", "**.c", "**.m", "**.mm" },
+        Utility = "**.def"
     }
 
 filter "configurations:Debug"

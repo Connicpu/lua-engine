@@ -34,6 +34,7 @@
 
     // Render Target
     typedef struct render_target render_target;
+    typedef struct framebuffer framebuffer;
 
     // Window
     typedef struct window window;
@@ -48,6 +49,11 @@
     typedef enum mouse_button mouse_button;
     typedef enum element_state element_state;
     typedef enum virtual_key_code virtual_key_code;
+
+    // Texture
+    typedef struct texture_set_params texture_set_params;
+    typedef struct texture_set texture_set;
+    typedef struct texture texture;
 
     // Scene
     typedef struct scene scene;
@@ -328,14 +334,46 @@
     void rd_free_instance(instance *inst);
 
 
-    render_target *rd_create_framebuffer(device *dev, uint32_t width, uint32_t height);
+    framebuffer *rd_create_framebuffer(device *dev, uint32_t width, uint32_t height);
+    void rd_free_framebuffer(framebuffer *fb);
+    void rd_clear_framebuffer(framebuffer *fb, const color *clear);
+
+    render_target *rd_get_framebuffer_target(framebuffer *fb);
+    texture *rd_get_framebuffer_texture(framebuffer *fb);
+
+
+    struct texture_set_params {
+        bool streaming;
+        uint32_t sprite_count;
+        uint32_t sprite_width;
+        uint32_t sprite_height;
+        const uint8_t *const *buffers;
+        bool pixel_art;
+    };
+
+    texture_set *rd_create_texture_set(device *dev, const texture_set_params *params);
+    void rd_free_texture_set(texture_set *set);
+
+    void rd_get_texture_set_size(const texture_set *set, uint32_t *width, uint32_t *height);
+    uint32_t rd_get_texture_set_count(const texture_set *set);
+    bool rd_is_texture_set_streaming(const texture_set *set);
+    bool rd_is_texture_set_pixel_art(const texture_set *set);
+    bool rd_set_texture_set_pixel_art(texture_set *set, bool pa);
+
+    texture *rd_get_texture(texture_set *set, uint32_t index);
+    texture_set *rd_get_texture_set(texture *texture);
+    void rd_update_texture(const uint8_t *data, size_t len);
 
 
     struct sprite_params {
         bool is_translucent;
         bool is_static;
-        color tint;
+        float layer;
+        texture *tex;
+        vec2 uv_topleft;
+        vec2 uv_topright;
         matrix2d transform;
+        color tint;
     };
 
     scene *rd_create_scene(device *device);
@@ -344,6 +382,15 @@
     sprite_handle rd_create_sprite(scene *scene, sprite_params *params);
     void rd_destroy_sprite(scene *scene, sprite_handle sprite);
 
+    void rd_get_sprite_uv(scene *scene, sprite_handle sprite, vec2 *topleft, vec2 *topright);
+    void rd_set_sprite_uv(scene *scene, sprite_handle sprite, const vec2 *topleft, const vec2 *topright);
+
+    float rd_get_sprite_layer(scene *scene, sprite_handle sprite);
+    void rd_set_sprite_layer(scene *scene, sprite_handle sprite, float layer);
+
+    texture *rd_get_sprite_texture(scene *scene, sprite_handle sprite);
+    void rd_set_sprite_texture(scene *scene, sprite_handle sprite, texture *tex);
+
     void rd_get_sprite_transform(scene *scene, sprite_handle sprite, matrix2d *transform);
     void rd_set_sprite_transform(scene *scene, sprite_handle sprite, const matrix2d *transform);
 
@@ -351,7 +398,14 @@
     void rd_set_sprite_tint(scene *scene, sprite_handle sprite, const color *tint);
 
 
+    
+
+
     struct adapter_output {
+        // An index that can be used for looking up this adapter later,
+        // but only within this process on this specific instance.
+        uint32_t process_index;
+
         output_id id;
         uint64_t device_memory;
         char device_name[64];

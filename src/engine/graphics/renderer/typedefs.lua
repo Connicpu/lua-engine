@@ -35,6 +35,7 @@ ffi.rd_header.cdef[[
     typedef enum virtual_key_code virtual_key_code;
 
     // Texture
+    typedef struct texture_set_params texture_set_params;
     typedef struct texture_set texture_set;
     typedef struct texture texture;
 

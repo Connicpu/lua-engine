@@ -3,7 +3,6 @@ workspace "lua-engine"
     targetdir "bin/%{cfg.system}/%{cfg.platform}/%{cfg.buildcfg}"
     pic "On"
 
-    libdirs { os.findlib("dxgi") }
     libdirs {
         "$(CONNORLIB_HOME)/bin/%{cfg.system}/%{cfg.platform}"
     }
@@ -79,7 +78,8 @@ if os.is("macosx") then
 
         files {
             "src/backends/metal/*.h",
-            "src/backends/metal/*.cpp"
+            "src/backends/metal/*.cpp",
+            "src/backends/metal/*.mm",
         }
         links {
             "rd-common"

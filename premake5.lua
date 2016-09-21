@@ -17,7 +17,7 @@ workspace "lua-engine"
     vpaths {
         Headers = "**.h",
         Source = { "**.cpp", "**.c", "**.m", "**.mm" },
-        Utility = "**.def"
+        Utility = { "**.def", "**.manifest" }
     }
 
 filter "configurations:Debug"
@@ -29,13 +29,28 @@ filter "configurations:Release"
     optimize "On"
 
 filter "action:vs*"
-    pchheader "pch.h"
-    defines { "NOMINMAX", "WIN32_LEAN_AND_MEAN", "VC_EXTRA_LEAN" }
+    defines { "NOMINMAX", "WIN32_LEAN_AND_MEAN" }
     characterset "MBCS"
 
 filter "not action:vs*"
     toolset "clang"
     buildoptions { "-std=c++14" }
+
+---------------------------------------
+-- Windows
+
+project "launcher"
+    kind "WindowedApp"
+    language "C++"
+
+    files {
+        "src/launcher/*.h",
+        "src/launcher/*.cpp",
+        "src/launcher/*.manifest"
+    }
+
+    filter "action:vs*"
+        linkoptions { "/manifestinput:src/launcher/app.manifest" }
 
 ---------------------------------------
 -- Backends
@@ -50,6 +65,7 @@ project "rd-common"
     }
 
     filter "action:vs*"
+        pchheader "pch.h"
         pchsource "src/backends/common/pch.cpp"
 
 if os.is("windows") then
@@ -69,6 +85,8 @@ if os.is("windows") then
             "d2d1",
             "rd-common"
         }
+
+        pchheader "pch.h"
         pchsource "src/backends/dx11/pch.cpp"
 end
 
@@ -81,6 +99,7 @@ if os.is("macosx") then
             "src/backends/metal/*.h",
             "src/backends/metal/*.cpp",
             "src/backends/metal/*.mm",
+            "src/backends/metal/*.m"
         }
         links {
             "rd-common"
@@ -102,5 +121,6 @@ if not os.is("macosx") then
 
         filter "action:vs*"
             files { "src/backends/vulkan/*.def" }
+            pchheader "pch.h"
             pchsource "src/backends/vulkan/pch.cpp"
 end

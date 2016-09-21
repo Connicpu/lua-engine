@@ -102,6 +102,8 @@
         EVENT_MOUSE_MOVED,
         EVENT_MOUSE_INPUT,
         EVENT_MOUSE_WHEEL,
+
+        EVENT_DPI_CHANGED,
     };
 
     enum mouse_button {
@@ -326,6 +328,10 @@
             struct {
                 float dx, dy;
             } mouse_wheel;
+
+            struct {
+                float dpi;
+            } dpi_changed;
         };
     };
 
@@ -408,6 +414,7 @@
 
         output_id id;
         uint64_t device_memory;
+        uint64_t system_memory;
         char device_name[64];
     };
 

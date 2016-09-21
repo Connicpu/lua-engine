@@ -8,6 +8,7 @@ ffi.rd_header.cdef[[
 
         output_id id;
         uint64_t device_memory;
+        uint64_t system_memory;
         char device_name[64];
     };
 

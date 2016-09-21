@@ -3,7 +3,7 @@
 #include "Instance.h"
 #include <memory>
 
-static ComPtr<IDXGIAdapter> find_adapter(const device_params *params)
+static ComPtr<IDXGIAdapter> find_adapter(const device *dev, const device_params *params)
 {
     auto dxgi = dev->inst->dxgi_factory.p;
 
@@ -21,7 +21,13 @@ static ComPtr<IDXGIAdapter> find_adapter(const device_params *params)
     }
 
     if (!use_adapter)
+    {
         adapter.Release();
+        // Use adapter 0 by default
+        HRESULT hr = dxgi->EnumAdapters(0, &adapter);
+        if (FAILED(hr))
+            return set_error_and_ret(nullptr, hr);
+    }
 
     return adapter;
 }
@@ -33,12 +39,11 @@ device *rd_create_device(const device_params *params)
 
     auto inst = params->inst;
     dev->inst = inst;
-    auto adapter = find_adapter(params);
+    auto adapter = find_adapter(dev.get(), params);
+    if (!adapter)
+        return nullptr;
 
     auto driver_type = D3D_DRIVER_TYPE_UNKNOWN;
-    if (!adapter)
-        driver_type = D3D_DRIVER_TYPE_HARDWARE;
-
     UINT flags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
     if (params->enable_debug_mode)
         flags |= D3D11_CREATE_DEVICE_DEBUG;

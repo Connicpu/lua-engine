@@ -3,6 +3,8 @@
 
 !/vendor/bin/
 
+bytecode.cpp
+
 #### Intermediate project types
 
 # Visual Studio

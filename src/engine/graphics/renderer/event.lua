@@ -18,6 +18,8 @@ ffi.rd_header.cdef[[
         EVENT_MOUSE_MOVED,
         EVENT_MOUSE_INPUT,
         EVENT_MOUSE_WHEEL,
+
+        EVENT_DPI_CHANGED,
     };
 
     enum mouse_button {
@@ -242,6 +244,10 @@ ffi.rd_header.cdef[[
             struct {
                 float dx, dy;
             } mouse_wheel;
+
+            struct {
+                float dpi;
+            } dpi_changed;
         };
     };
 ]]

@@ -1,5 +1,5 @@
 use std::path::{Path, PathBuf};
-use std::fs::{self, Metadata};
+use std::fs::{self, Metadata, ReadDir};
 use std::ffi::OsStr;
 use std::{slice, str, ptr, mem};
 use std::ops::Deref;
@@ -227,7 +227,7 @@ fn path_file_name(path: PathObj, len: *mut usize) -> *const u8 {
 #[no_mangle]
 pub unsafe extern "C"
 fn path_file_stem(path: PathObj, len: *mut usize) -> *const u8 {
-    let stem = match path.file_name().and_then(OsStr::to_str) {
+    let stem = match path.file_stem().and_then(OsStr::to_str) {
         Some(n) => n.as_bytes(),
         None => return ptr::null(),
     };
@@ -239,7 +239,7 @@ fn path_file_stem(path: PathObj, len: *mut usize) -> *const u8 {
 #[no_mangle]
 pub unsafe extern "C"
 fn path_extension(path: PathObj, len: *mut usize) -> *const u8 {
-    let ext = match path.file_name().and_then(OsStr::to_str) {
+    let ext = match path.extension().and_then(OsStr::to_str) {
         Some(n) => n.as_bytes(),
         None => return ptr::null(),
     };
@@ -475,4 +475,30 @@ fn path_free_metadata(meta: *mut Metadata) {
     Box::from_raw(meta);
 }
 
+//-----------------------
+// ReadDir functions
+
+#[no_mangle]
+pub unsafe extern "C"
+fn path_read_dir(path: PathObj) -> *mut ReadDir {
+    match path.read_dir() {
+        Ok(rd) => Box::into_raw(Box::new(rd)),
+        Err(_) => ptr::null_mut()
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C"
+fn path_read_dir_next(rd: *mut ReadDir) -> *mut PathBuf {
+    match (*rd).next() {
+        Some(Ok(entry)) => Box::into_raw(Box::new(entry.path())),
+        _ => ptr::null_mut(),
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C"
+fn path_free_read_dir(rd: *mut ReadDir) {
+    Box::from_raw(rd);
+}
 

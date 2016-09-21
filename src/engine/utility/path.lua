@@ -18,7 +18,7 @@ Path:parent() -> Path
 Path:strip_prefix(Path|string) -> Path?
 Path:file_name() -> string
 Path:file_stem() -> string?
-Path:extension() -> String?
+Path:extension() -> string?
 Path:join(Path|string...) -> PathBuf
 Path:with_file_name(string) -> PathBuf
 Path:with_extension(string) -> PathBuf
@@ -67,6 +67,8 @@ ffi.cdef[[
         bool _has_po;
         PathObj _po;
     };
+
+    typedef struct ReadDir ReadDir;
 
     typedef struct PMeta PMeta;
     typedef enum MetaFileType {
@@ -135,6 +137,10 @@ ffi.cdef[[
     int64_t path_meta_accessed(const PMeta *meta);
     int64_t path_meta_created(const PMeta *meta);
     void path_free_metadata(PMeta *meta);
+
+    ReadDir *path_read_dir(PathObj path);
+    PBuf *path_read_dir_next(ReadDir *rd);
+    void path_free_read_dir(ReadDir *rd);
 ]]
 
 local plib = ffi.load("path_helper")
@@ -337,6 +343,27 @@ function Path:symlink_metadata()
     local m = plib.path_symlink_metadata(obj)
     if m == nil then return nil end
     return FileMeta_ct(m)
+end
+
+local function walk_iter(state)
+    if state == nil then
+        return nil
+    end
+
+    local ptr = plib.path_read_dir_next(state)
+    if ptr == nil then
+        return nil
+    end
+    return ffi_new(PathBuf_ct, ptr, false)
+end
+
+function Path:walk()
+    local obj = pathify(self)
+    local ptr = plib.path_read_dir(obj)
+    if ptr ~= nil then
+        ptr = ffi.gc(ptr, plib.path_free_read_dir)
+    end
+    return walk_iter, ptr
 end
 
 function Path.copy(from, to)

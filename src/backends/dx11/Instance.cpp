@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Instance.h"
 #include <memory>
-#include <backends/common/SceneGraph2d.h>
 
 extern "C" instance *rd_create_instance()
 {

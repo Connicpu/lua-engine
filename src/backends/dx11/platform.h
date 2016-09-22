@@ -12,6 +12,7 @@
 #include <codecvt>
 #include <backends/common/renderer.h>
 #include <backends/common/renderer_math.h>
+#include <backends/common/scene_graph.h>
 
 template <typename T>
 using ComPtr = ATL::CComPtr<T>;

@@ -1,6 +1,28 @@
 #pragma once
 
-#include <backends/common/renderer.h>
+#include "platform.h"
+
+// TODO: put this somewhere
+template <typename T>
+class InstanceBuffer
+{
+public:
+};
+
+struct sprite_object
+{
+
+};
+
+struct sprite_instance
+{
+
+};
+
+struct scene
+{
+    scene_graph<sprite_object, sprite_instance, InstanceBuffer> graph;
+};
 
 extern "C" scene *rd_create_scene(device *device, float grid_width, float grid_height);
 extern "C" void rd_free_scene(scene *scene);

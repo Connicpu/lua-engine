@@ -47,6 +47,9 @@ function matrix2d.scale(scale, center)
         scale = vec2_ct(scale, center)
         center = vec2_ct(0, 0)
     end
+    if type(scale) == 'number' then
+        scale = vec2_ct(scale, scale)
+    end
 
     return matrix2d_ct(
         scale.x, 0,

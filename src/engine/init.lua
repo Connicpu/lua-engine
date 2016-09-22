@@ -4,4 +4,8 @@ require("engine.utility")
 
 local module = {}
 
+function module.run()
+    
+end
+
 return module

@@ -60,8 +60,7 @@ project "launcher"
 
     files {
         "src/launcher/*.h",
-        "src/launcher/*.cpp",
-        "src/launcher/*.manifest"
+        "src/launcher/*.cpp"
     }
 
     links { "lua51" }
@@ -81,7 +80,11 @@ project "launcher"
         linkoptions { "-pagezero_size 10000 -image_base 100000000" }
 
     filter "action:vs*"
-        linkoptions { "/manifestinput:src/launcher/app.manifest" }
+        linkoptions {
+            "/manifestinput:src/launcher/app.manifest",
+            "/entry:WinMainCRTStartup",
+        }
+        files { "src/launcher/app.manifest" }
 
 ---------------------------------------
 -- Backends

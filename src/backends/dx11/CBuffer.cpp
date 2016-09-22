@@ -13,10 +13,10 @@ bool rd_cbuffer_update(device *dev, const void *data, size_t size, size_t &size_
 
         D3D11_BUFFER_DESC desc;
         desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        desc.ByteWidth = size;
+        desc.ByteWidth = (uint32_t)size;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         desc.MiscFlags = 0;
-        desc.StructureByteStride = size;
+        desc.StructureByteStride = (uint32_t)size;
         desc.Usage = D3D11_USAGE_DYNAMIC;
 
         D3D11_SUBRESOURCE_DATA init_data = { 0 };

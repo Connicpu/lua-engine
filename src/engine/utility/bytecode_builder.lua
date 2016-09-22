@@ -32,9 +32,7 @@ local function build_file(path, mod_name)
     
     local f_iter, f_state, f_line = lfile:lines()
     local func, err = load(function()
-        repeat
-            f_line = f_iter(f_state, f_line)
-        until f_line ~= ""
+        f_line = f_iter(f_state, f_line)
         if f_line then
             return f_line.."\n"
         end

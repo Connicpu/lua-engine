@@ -1,9 +1,8 @@
 #include <Windows.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <VersionHelpers.h>
 
-INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
+extern "C" INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
 {
     int argc = __argc;
     char **argv = __argv;
@@ -11,13 +10,11 @@ INT WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, INT)
     bool console = false;
     for (int i = 1; i < argc; ++i)
     {
-        if (argv[i] == "--console")
+        if (strcmp(argv[i], "--console") == 0)
         {
             console = true;
         }
     }
-
-    auto b = IsWindows8Point1OrGreater();
 
     if (console)
     {

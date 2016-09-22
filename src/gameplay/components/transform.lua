@@ -2,6 +2,10 @@ local scomp = require("engine.components.struct_components")
 local entity = require("engine.entities.entity")
 local ffi = require("ffi")
 
+local rotation = math.matrix2d.rotation
+local scale = math.matrix2d.scale
+local translation = math.matrix2d.translation
+
 ffi.cdef[[
     struct Transform {
         vec2 position;
@@ -10,8 +14,8 @@ ffi.cdef[[
         float rotation;
         entity_t parent;
 
-        matrix2d self_transform;
         matrix2d transform;
+        matrix2d self_transform;
     };
 ]]
 
@@ -28,7 +32,26 @@ function Transform:initialize()
     self.parent   = entity.empty
 end
 
-function Transform:update_self
+function Transform:update()
+    self.hierarchy_transform =
+        scale(self.size) *
+        rotation(self.rotation) *
+        translation(self.position)
+end
+
+function Transform:update_self(data)
+    local transforms = data.components.transform
+    local transform = self.transform
+    
+    local parent = self.parent
+    while parent:is_valid() do
+        local pt = transforms[parent]
+        transform = transform * pt.transform
+        parent = pt.parent
+    end
+
+    self.self_transform = scale(self.size) * transform
+end
 
 function Transform:serialize(state)
     state:write_vec2("position", self.position)

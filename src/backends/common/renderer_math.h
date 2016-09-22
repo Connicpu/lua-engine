@@ -183,4 +183,23 @@ inline vec2 transform_point(const matrix2d &m, vec2 point)
     };
 }
 
+inline vec2 transform_vector(const matrix2d &m, vec2 vector)
+{
+    return vec2
+    {
+        vector.x*m.m11 + vector.y*m.m21,
+        vector.x*m.m12 + vector.y*m.m22,
+    };
+}
+
+inline matrix2d operator*(const matrix2d &m1, const matrix2d &m2)
+{
+    return matrix2d
+    {
+        m1.m11 * m2.m11 + m1.m12 * m2.m21,          m1.m11 * m2.m12 + m1.m12 * m2.m22,
+        m2.m11 * m1.m21 + m2.m21 * m1.m22,          m2.m12 * m1.m21 + m1.m22 * m2.m22,
+        m2.m31 + m2.m11 * m1.m31 + m2.m21 * m1.m32, m2.m32 + m2.m12 * m1.m31 + m2.m22 * m1.m32,
+    };
+}
+
 #pragma endregion

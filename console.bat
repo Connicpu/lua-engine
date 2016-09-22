@@ -1,2 +1,2 @@
 @echo off
-vendor\bin\windows_x64\luajit.exe -i src/main.lua interactive
+bin\windows\x64\Release\luajit.exe -i src/main.lua interactive

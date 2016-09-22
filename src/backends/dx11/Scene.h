@@ -2,8 +2,10 @@
 
 #include <backends/common/renderer.h>
 
-extern "C" scene *rd_create_scene(device *device);
+extern "C" scene *rd_create_scene(device *device, float grid_width, float grid_height);
 extern "C" void rd_free_scene(scene *scene);
+
+extern "C" void rd_draw_scene(device *dev, scene *scene, camera *cam);
 
 extern "C" sprite_handle rd_create_sprite(scene *scene, sprite_params *params);
 extern "C" void rd_destroy_sprite(scene *scene, sprite_handle sprite);

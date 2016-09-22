@@ -1,6 +1,9 @@
 local args = { ... }
 
-package.path = './src/?.lua;./src/?/init.lua'
+if args[1] ~= "--skip-package-bs" then
+    package.path = './src/?.lua;./src/?/init.lua'
+end
+
 local engine = require("engine")
 
 local buildrd = table.findi(args, "--build-rd-header")

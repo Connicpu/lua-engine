@@ -12,8 +12,10 @@ ffi.rd_header.cdef[[
         color tint;
     };
 
-    scene *rd_create_scene(device *device);
+    scene *rd_create_scene(device *dev, float grid_width, float grid_height);
     void rd_free_scene(scene *scene);
+
+    void rd_draw_scene(device *dev, scene *scene, camera *cam);
 
     sprite_handle rd_create_sprite(scene *scene, sprite_params *params);
     void rd_destroy_sprite(scene *scene, sprite_handle sprite);

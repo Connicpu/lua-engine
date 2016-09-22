@@ -90,7 +90,7 @@ end
 local function det(m)
     return m.m11 * m.m22 - m.m12 * m.m21
 end
-matrix2d.determinant = det
+matrix2d.det = det
 
 local function uninv_det(d)
     return abs(d) < 0.0000001

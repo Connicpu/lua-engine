@@ -1,10 +1,15 @@
 #pragma once
 
-#include <backends/common/renderer.h>
+#include "platform.h"
+#include "RenderTarget.h"
+#include "DepthBuffer.h"
 
 struct window
 {
     HWND hwnd;
+
+    ComPtr<IDXGISwapChain> swap_chain;
+    render_target back_buffer;
 };
 
 extern "C" size_t rd_get_outputs(instance *inst, size_t len, adapter_output *outputs);

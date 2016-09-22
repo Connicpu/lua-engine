@@ -1,5 +1,6 @@
 local ffi = require("engine.graphics.renderer.typedefs")
 
+require("engine.graphics.renderer.camera")
 require("engine.graphics.renderer.device")
 require("engine.graphics.renderer.error")
 require("engine.graphics.renderer.event")

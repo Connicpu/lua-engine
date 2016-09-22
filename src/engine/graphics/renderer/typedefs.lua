@@ -35,14 +35,17 @@ ffi.rd_header.cdef[[
     typedef enum virtual_key_code virtual_key_code;
 
     // Texture
-    typedef struct texture_set_params texture_set_params;
-    typedef struct texture_set texture_set;
+    typedef struct texture_array_params texture_array_params;
+    typedef struct texture_array texture_array;
     typedef struct texture texture;
 
     // Scene
     typedef struct scene scene;
     typedef struct sprite_object *sprite_handle;
     typedef struct sprite_params sprite_params;
+
+    // Camera
+    typedef struct camera camera;
 
     // Text
     typedef struct text_object *text_handle;

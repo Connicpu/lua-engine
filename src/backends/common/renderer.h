@@ -51,8 +51,8 @@
     typedef enum virtual_key_code virtual_key_code;
 
     // Texture
-    typedef struct texture_set_params texture_set_params;
-    typedef struct texture_set texture_set;
+    typedef struct texture_array_params texture_array_params;
+    typedef struct texture_array texture_array;
     typedef struct texture texture;
 
     // Scene
@@ -60,9 +60,19 @@
     typedef struct sprite_object *sprite_handle;
     typedef struct sprite_params sprite_params;
 
+    // Camera
+    typedef struct camera camera;
+
     // Text
     typedef struct text_object *text_handle;
     typedef struct text_params text_params;
+
+
+    camera *rd_create_camera();
+    void rd_free_camera(camera *cam);
+
+    void rd_set_camera_aspect(camera *cam, float aspect_ratio);
+    bool rd_update_camera(camera *cam, matrix2d *transform);
 
 
     struct device_params {
@@ -342,13 +352,14 @@
 
     framebuffer *rd_create_framebuffer(device *dev, uint32_t width, uint32_t height);
     void rd_free_framebuffer(framebuffer *fb);
-    void rd_clear_framebuffer(framebuffer *fb, const color *clear);
 
     render_target *rd_get_framebuffer_target(framebuffer *fb);
     texture *rd_get_framebuffer_texture(framebuffer *fb);
+    void rd_clear_render_target(device *dev, render_target *rt, const color *clear);
+    void rd_clear_depth_buffer(device *dev, render_target *rt);
 
 
-    struct texture_set_params {
+    struct texture_array_params {
         bool streaming;
         uint32_t sprite_count;
         uint32_t sprite_width;
@@ -357,17 +368,17 @@
         bool pixel_art;
     };
 
-    texture_set *rd_create_texture_set(device *dev, const texture_set_params *params);
-    void rd_free_texture_set(texture_set *set);
+    texture_array *rd_create_texture_array(device *dev, const texture_array_params *params);
+    void rd_free_texture_array(texture_array *set);
 
-    void rd_get_texture_set_size(const texture_set *set, uint32_t *width, uint32_t *height);
-    uint32_t rd_get_texture_set_count(const texture_set *set);
-    bool rd_is_texture_set_streaming(const texture_set *set);
-    bool rd_is_texture_set_pixel_art(const texture_set *set);
-    bool rd_set_texture_set_pixel_art(texture_set *set, bool pa);
+    void rd_get_texture_array_size(const texture_array *set, uint32_t *width, uint32_t *height);
+    uint32_t rd_get_texture_array_count(const texture_array *set);
+    bool rd_is_texture_array_streaming(const texture_array *set);
+    bool rd_is_texture_array_pixel_art(const texture_array *set);
+    bool rd_set_texture_array_pixel_art(texture_array *set, bool pa);
 
-    texture *rd_get_texture(texture_set *set, uint32_t index);
-    texture_set *rd_get_texture_set(texture *texture);
+    texture *rd_get_texture(texture_array *set, uint32_t index);
+    texture_array *rd_get_texture_array(texture *texture);
     void rd_update_texture(const uint8_t *data, size_t len);
 
 
@@ -382,8 +393,10 @@
         color tint;
     };
 
-    scene *rd_create_scene(device *device);
+    scene *rd_create_scene(device *dev, float grid_width, float grid_height);
     void rd_free_scene(scene *scene);
+
+    void rd_draw_scene(device *dev, scene *scene, camera *cam);
 
     sprite_handle rd_create_sprite(scene *scene, sprite_params *params);
     void rd_destroy_sprite(scene *scene, sprite_handle sprite);

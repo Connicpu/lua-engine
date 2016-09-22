@@ -1,12 +1,16 @@
 #include "pch.h"
 #include "Scene.h"
 
-scene * rd_create_scene(device * device)
+scene * rd_create_scene(device * device, float grid_width, float grid_height)
 {
     return nullptr;
 }
 
 void rd_free_scene(scene * scene)
+{
+}
+
+void rd_draw_scene(device * dev, scene * scene, camera * cam)
 {
 }
 

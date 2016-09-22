@@ -12,11 +12,8 @@ size_t rd_get_outputs(instance * inst, size_t len, adapter_output * outputs)
     ComPtr<IDXGIAdapter> adapter;
     for (UINT i = 0; dxgi->EnumAdapters(i, &adapter) == S_OK; ++i, ++count)
     {
-        if (outputs)
+        if (outputs && i < len)
         {
-            if (i >= len)
-                break;
-
             DXGI_ADAPTER_DESC desc;
             adapter->GetDesc(&desc);
 

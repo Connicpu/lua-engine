@@ -10,6 +10,8 @@
 #include <atlbase.h>
 #include <comdef.h>
 #include <codecvt>
+#include <backends/common/renderer.h>
+#include <backends/common/renderer_math.h>
 
 template <typename T>
 using ComPtr = ATL::CComPtr<T>;

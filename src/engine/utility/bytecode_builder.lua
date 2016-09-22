@@ -13,11 +13,13 @@ local function start_build()
     end
 
     bfile:write[[
-        #include <unordered_map>
+#include <unordered_map>
+#include <string>
+using namespace std::string_literals;
 
-        std::unordered_map<std::string, std::string> baked_bytecode =
-        std::unordered_map<std::string, std::string> {
-    ]]
+std::unordered_map<std::string, std::string> baked_bytecode =
+std::unordered_map<std::string, std::string> {
+]]
 end
 
 local function end_build()
@@ -43,17 +45,17 @@ local function build_file(path, mod_name)
         return
     end
 
-    local data = string.dump(func)
+    local data = string.dump(func, true)
 
     bfile:write('{"')
     bfile:write(mod_name)
-    bfile:write('","')
+    bfile:write('"s,"')
 
     for i = 1, #data do
         bfile:write(string.format("\\x%02X", string.byte(data, i)))
     end
 
-    bfile:write('"},\n')
+    bfile:write('"s},\n')
 end
 
 local function inner_mod(item, mod_name)

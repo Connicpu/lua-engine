@@ -10,6 +10,7 @@ ffi.cdef[[
 
 local ffi_new = ffi.new
 local ffi_gc = ffi.gc
+local ffi_fill = ffi.fill
 local C = ffi.C
 
 local function build_type(value_t, needs_dtor)
@@ -110,6 +111,16 @@ local function build_type(value_t, needs_dtor)
         return self.data[i - 1]
     end
 
+    function Vector:replace(i, value)
+        if i < 1 or i > self.len then
+            return nil
+        end
+
+        local old = ffi_new(value_t, self.data[i - 1])
+        self.data[i - 1] = ffi_gc(value, nil)
+        return old
+    end
+
     function Vector:remove(i)
         if i < 1 or i > self.len then
             return nil
@@ -134,7 +145,42 @@ local function build_type(value_t, needs_dtor)
         end
     end
 
+    -- WARNING: Be careful with this on types that need a destructor
+    function Vector:zero_extend(new_len)
+        local old_len = self.len
+        if new_len <= old_len then
+            return
+        end
+
+        if new_len > self.cap then
+            grow(self, new_len)
+        end
+
+        local bytes = (new_len - old_len) * value_size
+        ffi_fill(self.data + old_len, bytes)
+        self.len = new_len
+    end
+
     Vector_ct = ffi.metatype(vector_t, vector_mt)
 
     return Vector_ct
 end
+
+local cache = {}
+
+local function get_type(value_t, needs_dtor)
+    if needs_dtor == nil then
+        needs_dtor = true
+    end
+    if not cache[value_t] then
+        cache[value_t] = {
+            [true] = build_type(value_t, true),
+            [false] = build_type(value_t, false),
+        }
+    end
+    return cache[value_t][needs_dtor]
+end
+
+return {
+    type = get_type
+}

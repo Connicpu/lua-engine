@@ -13,6 +13,7 @@ ffi.cdef[[
         float scale;
         float rotation;
         entity_t parent;
+        bool updated;
 
         matrix2d transform;
         matrix2d self_transform;
@@ -30,6 +31,7 @@ function Transform:initialize()
     self.scale    = 1
     self.rotation = 1
     self.parent   = entity.empty
+    self.updated  = true
 end
 
 function Transform:update()
@@ -45,7 +47,7 @@ function Transform:update_self(data)
     
     local parent = self.parent
     while parent:is_valid() do
-        local pt = transforms[parent]
+        local pt = transforms:get(parent)
         transform = transform * pt.transform
         parent = pt.parent
     end

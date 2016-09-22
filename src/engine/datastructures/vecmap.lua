@@ -56,8 +56,13 @@ local function build_type(value_t, needs_dtor)
             alloc(self, i + 1)
         end
 
-        if self.exists:get(i).exists = true
-        return self.data:replace(i, value)
+        local e_entry = self.exists:get(i)
+        if e_entry.exists then
+            return self.data:replace(i, value)
+        end
+        
+        e_entry.exists = true
+        self.data.data[i - 1] = ffi_gc(value, nil)
     end
 
     function VecMap:get(i)

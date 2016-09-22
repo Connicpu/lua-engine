@@ -13,8 +13,7 @@ local function start_build()
     end
 
     bfile:write[[
-#include <unordered_map>
-#include <string>
+#include "bytecode.h"
 using namespace std::string_literals;
 
 std::unordered_map<std::string, std::string> baked_bytecode =
@@ -23,8 +22,7 @@ std::unordered_map<std::string, std::string> {
 end
 
 local function end_build()
-    bfile:write("};")
-    bfile:close()
+    bfile:write("};\n")
 end
 
 local function build_file(path, mod_name)
@@ -86,11 +84,79 @@ local function build_dir(dir, mod_name)
     end
 end
 
+local function start_list()
+    bfile:write[[
+bytecode_listing bytecode_list =
+]]
+end
+
+local function end_list()
+    bfile:write(";")
+    bfile:close()
+end
+
+local function indent(i)
+    for j = 0, i do
+        bfile:write("    ")
+    end
+end
+
+local function contains_lua(dir)
+    for item in dir:walk() do
+        if item:is_file() and item:extension() == 'lua' then
+            return true
+        elseif item:is_dir() then
+            if contains_lua(item) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+local function list_dir(path, i)
+    bfile:write("bytecode_listing {\n")
+    indent(i + 1)
+    bfile:write("std::unordered_set<std::string> {")
+    for item in path:walk() do
+        if item:is_file() and item:extension() == 'lua' then
+            bfile:write('"')
+            bfile:write(item:file_stem())
+            bfile:write('"s,')
+        elseif item:is_dir() and path.join(item, "init.lua"):exists() then
+            bfile:write('"')
+            bfile:write(item:file_name())
+            bfile:write('"s,')
+        end
+    end
+    bfile:write("},\n")
+
+    indent(i + 1)
+    bfile:write("std::unordered_map<std::string, bytecode_listing> {\n")
+    for item in path:walk() do
+        if item:is_dir() and contains_lua(item) then
+            indent(i + 2)
+            bfile:write('{"')
+            bfile:write(item:file_name())
+            bfile:write('"s, ')
+            list_dir(item, i + 2)
+            bfile:write("},\n")
+        end
+    end
+    indent(i + 1)
+    bfile:write("},\n")
+    indent(i)
+    bfile:write("}")
+end
+
 function module.build()
     local root = path.new("src")
     start_build()
     build_dir(root, nil)
     end_build()
+    start_list()
+    list_dir(root, 0)
+    end_list()
 end
 
 return module

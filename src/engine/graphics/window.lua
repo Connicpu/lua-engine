@@ -364,7 +364,11 @@ function Window:present()
 end
 
 function Window:test_occlusion()
-    return __rd.rd_test_window_occlusion(self.win)
+    if __rd.rd_test_window_occlusion(self.win) then
+        return 'unoccluded'
+    else
+        return 'occluded'
+    end
 end
 
 Window_ct = ffi.metatype(Window_t, Window_mt)

@@ -37,12 +37,12 @@ function module.run()
 
             -- TODO: Draw!
 
-            if window:present() then
+            if window:present() == 'occluded' then
                 print('occluded')
                 occluded = true
             end
         -- If we're occluded, check if we're not anymore
-        elseif window:test_occlusion() then
+        elseif window:test_occlusion() == 'unoccluded' then
             print('unoccluded')
             occluded = false
         end

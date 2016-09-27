@@ -37,7 +37,9 @@ ffi.rd_header.cdef[[
     bool rd_set_window_state(window *win, window_state state);
     render_target *rd_get_window_target(window *win);
     void rd_get_window_dpi(window *win, float *dpix, float *dpiy);
-    bool rd_prepare_window_for_drawing(device * dev, window *win);
+    bool rd_prepare_window_for_drawing(device *dev, window *win);
+    int rd_present_window(window *win);
+    bool rd_test_window_occlusion(window *win);
 ]]
 
 return ffi

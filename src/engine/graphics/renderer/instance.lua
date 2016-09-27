@@ -4,3 +4,5 @@ ffi.rd_header.cdef[[
     instance *rd_create_instance();
     void rd_free_instance(instance *inst);
 ]]
+
+return ffi

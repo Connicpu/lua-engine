@@ -7,9 +7,14 @@ ffi.cdef[[
 ]]
 
 local color_table
-local color = {}
+local color_cls = {}
+local color = setmetatable({}, color_cls)
 local color_mt = { __index = color }
 local color_ct
+
+function color_cls:__call(...)
+    return color_ct(...)
+end
 
 function color.parse(str)
     if string.sub(str, 1, 1) == '#' then
@@ -193,6 +198,16 @@ color_table = {
     YellowGreen = color.parse("#9ACD32"),
 }
 
+require("engine.utility.string")
+local extras = {}
+for k, color in pairs(color_table) do
+    extras[string.lower(k)] = color
+    extras[string.snakify(k)] = color
+end
+for k, color in pairs(extras) do
+    color_table[k] = color
+end
+
 return {
-    color = color_ct
+    color = color
 }

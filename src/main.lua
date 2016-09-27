@@ -22,6 +22,13 @@ if build_bytecode then
     return
 end
 
+local build_moduledef = table.findi(args, "--build-module-def")
+if build_moduledef then
+    local builder = require("engine.graphics.module_def_builder")
+    builder.build()
+    return
+end
+
 local interactive = table.findi(args, "interactive")
 
 if not interactive then

@@ -10,3 +10,5 @@ ffi.rd_header.cdef[[
     bool rd_last_error(renderer_error *error);
     void rd_clear_error();
 ]]
+
+return ffi

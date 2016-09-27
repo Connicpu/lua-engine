@@ -10,3 +10,5 @@ ffi.rd_header.cdef[[
     device *rd_create_device(const device_params *params);
     void rd_free_device(device *dev);
 ]]
+
+return ffi

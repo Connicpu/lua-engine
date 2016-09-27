@@ -101,17 +101,22 @@ window_handler * rd_create_wh(const window_params * params)
     auto title = widen(params->title);
     auto hinst = GetHinstanceFromFn(rd_create_wh);
 
+    auto width = params->windowed_width;
+    auto height = params->windowed_height;
+    if (width == -1) width = CW_USEDEFAULT;
+    if (height == -1) width = CW_USEDEFAULT;
+
     wh->hinst = hinst;
     wh->wnd_class = make_class(hinst);
     wh->hwnd = CreateWindowExW(
         WS_EX_OVERLAPPEDWINDOW,
         wh->wnd_class.c_str(),
         title.c_str(),
-        WS_OVERLAPPED,
+        WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
-        params->windowed_width,
-        params->windowed_height,
+        width,
+        height,
         nullptr,
         nullptr,
         hinst,
@@ -119,7 +124,7 @@ window_handler * rd_create_wh(const window_params * params)
         );
 
     DragAcceptFiles(wh->hwnd, true);
-    ShowWindow(wh->hwnd, SW_SHOW);
+    ShowWindow(wh->hwnd, SW_SHOWNORMAL);
 
     if (params->state == borderless)
     {

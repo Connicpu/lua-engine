@@ -132,7 +132,26 @@ bool rd_prepare_window_for_drawing(device * dev, window * win)
     return true;
 }
 
-bool init_back_buffer(device * dev, window * win)
+int rd_present_window(window * win)
+{
+    HRESULT hr;
+    hr = win->swap_chain->Present(0, 0);
+    if (hr == DXGI_STATUS_OCCLUDED)
+        return 1;
+    else if (FAILED(hr))
+        return set_error_and_ret(-1, hr);
+
+    return 0;
+}
+
+bool rd_test_window_occlusion(window * win)
+{
+    HRESULT hr;
+    hr = win->swap_chain->Present(0, DXGI_PRESENT_TEST);
+    return hr != DXGI_STATUS_OCCLUDED;
+}
+
+static bool init_back_buffer(device * dev, window * win)
 {
     auto &swap = win->swap_chain;
     auto &bb = win->back_buffer;

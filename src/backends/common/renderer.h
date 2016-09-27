@@ -73,6 +73,7 @@
 
     void rd_set_camera_aspect(camera *cam, float aspect_ratio);
     bool rd_update_camera(camera *cam, const matrix2d *transform);
+    void rd_get_camera_transform(camera *cam, matrix2d *transform);
 
 
     struct device_params {
@@ -456,7 +457,9 @@
     bool rd_set_window_state(window *win, window_state state);
     render_target *rd_get_window_target(window *win);
     void rd_get_window_dpi(window *win, float *dpix, float *dpiy);
-    bool rd_prepare_window_for_drawing(device * dev, window *win);
+    bool rd_prepare_window_for_drawing(device *dev, window *win);
+    int rd_present_window(window *win);
+    bool rd_test_window_occlusion(window *win);
 
         #ifdef __cplusplus
         }

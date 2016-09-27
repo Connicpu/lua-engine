@@ -103,6 +103,18 @@ project "rd-common"
         pchsource "src/backends/common/pch.cpp"
 
 if os.is("windows") then
+    project "win32-handler"
+        kind "StaticLib"
+        language "C++"
+
+        files {
+            "src/backends/win32-handler/*.h",
+            "src/backends/win32-handler/*.cpp",
+        }
+        
+        pchheader "pch.h"
+        pchsource "src/backends/win32-handler/pch.cpp"
+
     project "rd-dx11"
         kind "SharedLib"
         language "C++"
@@ -110,14 +122,15 @@ if os.is("windows") then
         files {
             "src/backends/dx11/*.h",
             "src/backends/dx11/*.cpp",
-            "src/backends/dx11/*.def"
+            "src/backends/dx11/*.def",
         }
         links {
             "dwrite",
             "dxgi",
             "d3d11",
             "d2d1",
-            "rd-common"
+            "rd-common",
+            "win32-handler",
         }
 
         pchheader "pch.h"
@@ -140,6 +153,17 @@ if os.is("macosx") then
         }
 end
 
+if os.is("linux") then
+    project "x11-handler"
+        kind "StaticLib"
+        language "C++"
+
+        files {
+            "src/backends/x11-handler/*.h",
+            "src/backends/x11-handler/*.cpp",
+        }
+end
+
 if not os.is("macosx") then
     project "rd-vulkan"
         kind "SharedLib"
@@ -152,6 +176,11 @@ if not os.is("macosx") then
         links {
             "rd-common"
         }
+
+        filter "system:windows"
+            links { "win32-handler" }
+        filter "system:linux"
+            links { "x11-handler" }
 
         filter "action:vs*"
             files { "src/backends/vulkan/*.def" }

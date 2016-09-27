@@ -22,6 +22,7 @@ ffi.rd_header.cdef[[
         window_state state;
         int windowed_width;
         int windowed_height;
+        const char *title;
     };
 
     // Call this function with (inst, 0, nil) and it will return the
@@ -30,11 +31,13 @@ ffi.rd_header.cdef[[
     // written.
     size_t rd_get_outputs(instance *inst, size_t len, adapter_output *outputs);
 
-    window *rd_create_window(device *device, const window_params *params);
+    window *rd_create_window(device *dev, const window_params *params);
     void rd_free_window(window *win);
 
+    bool rd_set_window_state(window *win, window_state state);
     render_target *rd_get_window_target(window *win);
     void rd_get_window_dpi(window *win, float *dpix, float *dpiy);
+    bool rd_prepare_window_for_drawing(device * dev, window *win);
 ]]
 
 return ffi

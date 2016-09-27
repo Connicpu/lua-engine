@@ -8,9 +8,23 @@ static thread_local renderer_error last_error;
 void rd_set_error(int code, const char *msg)
 {
     has_last_error = true;
-    auto len = std::min(strlen(msg), size_t(127));
+    auto len = std::min(strlen(msg), ARRAYSIZE(last_error.message)-1);
     memcpy(last_error.message, msg, len);
     last_error.message[len] = 0;
+}
+
+void rd_append_error(const char * msg)
+{
+    assert(has_last_error);
+
+    auto new_len = strlen(msg);
+    auto old_len = strlen(last_error.message);
+    auto available = ARRAYSIZE(last_error.message) - old_len - 1;
+    auto move_amt = std::min(available, old_len) + 1;
+
+    memmove(last_error.message + new_len + 1, last_error.message, move_amt);
+    memcpy(last_error.message, msg, new_len);
+    last_error.message[new_len] = '\n';
 }
 
 bool rd_last_error(renderer_error *error)

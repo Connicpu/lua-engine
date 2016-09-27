@@ -5,9 +5,9 @@
 
 struct render_target
 {
-    ComPtr<ID3D11Texture2D> buffer;
-    ComPtr<ID3D11RenderTargetView> rtv;
-    ComPtr<IDXGISurface> surface;
+    com_ptr<ID3D11Texture2D> buffer;
+    com_ptr<ID3D11RenderTargetView> rtv;
+    com_ptr<IDXGISurface> surface;
 
     depth_buffer depth;
 };

@@ -4,9 +4,9 @@
 
 struct instance
 {
-    ComPtr<IDXGIFactory2> dxgi_factory;
-    ComPtr<IDWriteFactory> dwrite_factory;
-    ComPtr<ID2D1Factory1> d2d_factory;
+    com_ptr<IDXGIFactory2> dxgi_factory;
+    com_ptr<IDWriteFactory> dwrite_factory;
+    com_ptr<ID2D1Factory1> d2d_factory;
 };
 
 extern "C" instance *rd_create_instance();

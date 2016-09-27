@@ -6,6 +6,7 @@ ffi.rd_header.cdef[[
 
     void rd_set_camera_aspect(camera *cam, float aspect_ratio);
     bool rd_update_camera(camera *cam, const matrix2d *transform);
+    void rd_get_camera_transform(camera *cam, matrix2d *transform);
 ]]
 
 return ffi

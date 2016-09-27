@@ -3,12 +3,12 @@
 #include "Instance.h"
 #include <memory>
 
-static ComPtr<IDXGIAdapter> find_adapter(const device *dev, const device_params *params)
+static com_ptr<IDXGIAdapter> find_adapter(const device *dev, const device_params *params)
 {
     auto dxgi = dev->inst->dxgi_factory.p;
 
     bool use_adapter = false;
-    ComPtr<IDXGIAdapter> adapter;
+    com_ptr<IDXGIAdapter> adapter;
     for (UINT i = 0; dxgi->EnumAdapters(i, &adapter) == S_OK; ++i)
     {
         DXGI_ADAPTER_DESC adesc;
@@ -66,7 +66,7 @@ device *rd_create_device(const device_params *params)
     if (FAILED(hr))
         return set_error_and_ret(nullptr, hr);
 
-    ComPtr<IDXGIDevice> dxgi_device;
+    com_ptr<IDXGIDevice> dxgi_device;
     hr = dev->d3d_device->QueryInterface(&dxgi_device);
     if (FAILED(hr))
         return set_error_and_ret(nullptr, hr);

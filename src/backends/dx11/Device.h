@@ -6,10 +6,10 @@ struct device
 {
     instance *inst;
     
-    ComPtr<ID3D11Device> d3d_device;
-    ComPtr<ID3D11DeviceContext> d3d_context;
-    ComPtr<ID2D1Device> d2d_device;
-    ComPtr<ID2D1DeviceContext> d2d_context;
+    com_ptr<ID3D11Device> d3d_device;
+    com_ptr<ID3D11DeviceContext> d3d_context;
+    com_ptr<ID2D1Device> d2d_device;
+    com_ptr<ID2D1DeviceContext> d2d_context;
 };
 
 extern "C" device *rd_create_device(const device_params *params);

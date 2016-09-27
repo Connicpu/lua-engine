@@ -2,7 +2,7 @@
 #include "CBuffer.h"
 #include "Device.h"
 
-bool rd_cbuffer_update(device *dev, const void *data, size_t size, size_t &size_, ComPtr<ID3D11Buffer> &buf_)
+bool rd_cbuffer_update(device *dev, const void *data, size_t size, size_t &size_, com_ptr<ID3D11Buffer> &buf_)
 {
     HRESULT hr;
 

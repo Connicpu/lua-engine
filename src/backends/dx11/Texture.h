@@ -15,8 +15,8 @@ struct texture_array
 
     bool streaming;
     bool pixel_art;
-    ComPtr<ID3D11Texture2D> buffer;
-    ComPtr<ID3D11ShaderResourceView> srv;
+    com_ptr<ID3D11Texture2D> buffer;
+    com_ptr<ID3D11ShaderResourceView> srv;
     std::vector<texture> textures;
 };
 

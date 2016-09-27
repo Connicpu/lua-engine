@@ -9,3 +9,5 @@ ffi.rd_header.cdef[[
     void rd_clear_render_target(device *dev, render_target *rt, const color *clear);
     void rd_clear_depth_buffer(device *dev, render_target *rt);
 ]]
+
+return ffi

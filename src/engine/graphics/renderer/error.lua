@@ -3,7 +3,7 @@ local ffi = require("engine.graphics.renderer.typedefs")
 ffi.rd_header.cdef[[
     struct renderer_error {
         int system_code;
-        char message[128];
+        char message[1024];
     };
 
     // NOTE: The state is thread-local

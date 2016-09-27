@@ -1,13 +1,7 @@
 #pragma once
 
 #include "platform.h"
-
-// TODO: put this somewhere
-template <typename T>
-class InstanceBuffer
-{
-public:
-};
+#include "InstanceBuffer.h"
 
 struct sprite_object
 {

@@ -10,12 +10,15 @@ struct camera
     matrix2d cam_inverse;
     matrix2d cam_full;
     
-    CBuffer<matrix2d> cam_buffer;
+    cbuffer<matrix2d> cam_buffer;
     bool updated;
 };
 
-extern "C" camera *rd_create_camera();
-extern "C" void rd_free_camera(camera *cam);
+camera *rd_create_camera();
+void rd_free_camera(camera *cam);
 
-extern "C" void rd_set_camera_aspect(camera *cam, float aspect_ratio);
-extern "C" bool rd_update_camera(camera *cam, matrix2d *transform);
+void rd_set_camera_aspect(camera *cam, float aspect_ratio);
+bool rd_update_camera(camera *cam, const matrix2d *transform);
+void rd_get_camera_transform(camera *cam, matrix2d *transform);
+
+bool rd_upload_camera(device *dev, camera *cam);

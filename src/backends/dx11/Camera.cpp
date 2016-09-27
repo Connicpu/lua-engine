@@ -34,3 +34,18 @@ bool rd_update_camera(camera *cam, const matrix2d *transform)
 
     return true;
 }
+
+void rd_get_camera_transform(camera *cam, matrix2d *transform)
+{
+    *transform = cam->transform;
+}
+
+bool rd_upload_camera(device *dev, camera *cam)
+{
+    if (cam->updated)
+    {
+        cam->cam_buffer.update(dev, cam->cam_full);
+        cam->updated = false;
+    }
+    return true;
+}

@@ -12,7 +12,6 @@ local function fail()
         local fmt = "Renderer Error (0x%08X): %s"
         local code = temp.last_error[0].system_code
         local msg = ffi_string(temp.last_error[0].message)
-        msg = msg .. '\n' .. debug.traceback()
         error(string.format(fmt, code, msg))
     end
     error("Unknown renderer error (fail called, but rd_last_error was blank)")

@@ -17,11 +17,11 @@ ffi.rd_header.cdef[[
     uint32_t rd_get_texture_array_count(const texture_array *set);
     bool rd_is_texture_array_streaming(const texture_array *set);
     bool rd_is_texture_array_pixel_art(const texture_array *set);
-    bool rd_set_texture_array_pixel_art(texture_array *set, bool pa);
+    void rd_set_texture_array_pixel_art(texture_array *set, bool pa);
 
     texture *rd_get_texture(texture_array *set, uint32_t index);
     texture_array *rd_get_texture_array(texture *texture);
-    void rd_update_texture(const uint8_t *data, size_t len);
+    bool rd_update_texture(device *dev, texture *texture, const uint8_t *data, size_t len);
 ]]
 
 return ffi

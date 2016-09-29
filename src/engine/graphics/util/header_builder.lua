@@ -30,6 +30,10 @@ function ffi.rd_header.begin()
         struct color {
             float r, g, b, a;
         };
+        struct viewport {
+            float x, y;
+            float w, h;
+        };
     ]]
 end
 

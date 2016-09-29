@@ -3,7 +3,11 @@
 
 camera * rd_create_camera()
 {
-    return new camera;
+    camera *cam = new camera;
+    cam->aspect_ratio = 1;
+    auto ident = identity();
+    rd_update_camera(cam, &ident);
+    return cam;
 }
 
 void rd_free_camera(camera *cam)
@@ -44,8 +48,8 @@ bool rd_upload_camera(device *dev, camera *cam)
 {
     if (cam->updated)
     {
-        cam->cam_buffer.update(dev, cam->cam_full);
         cam->updated = false;
+        return cam->cam_buffer.update(dev, cam->cam_full);
     }
     return true;
 }

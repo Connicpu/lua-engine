@@ -2,6 +2,7 @@ workspace "lua-engine"
     objdir "obj/%{cfg.system}/%{prj.name}/%{cfg.platform}/%{cfg.buildcfg}"
     targetdir "bin/%{cfg.system}/%{cfg.platform}/%{cfg.buildcfg}"
     pic "On"
+    warnings "Extra"
 
     libdirs {
         "$(CONNORLIB_HOME)/bin/%{cfg.system}/%{cfg.platform}",
@@ -25,6 +26,7 @@ workspace "lua-engine"
         Headers = "**.h",
         Source = { "**.cpp", "**.c", "**.m", "**.mm" },
         Utility = { "**.def", "**.manifest" },
+        Shaders = { "**.hlsl", "**.vert", "**.frag" },
     }
 
     defines { "_USE_MATH_DEFINES" }
@@ -52,7 +54,7 @@ filter "not action:vs*"
     postbuildcommands { "build/%{cfg.system}/postbuild.sh" }
 
 ---------------------------------------
--- Windows
+-- Launcher
 
 project "launcher"
     kind "WindowedApp"
@@ -89,6 +91,13 @@ project "launcher"
 ---------------------------------------
 -- Backends
 
+local luajit
+if os.is("windows") then
+    luajit = [[%{wks.location}\vendor\bin\%{cfg.system}_%{cfg.platform}\luajit.exe]]
+else
+    luajit = "%{wks.location}/vendor/bin/%{cfg.system}_%{cfg.platform}/luajit"
+end
+
 project "rd-common"
     kind "StaticLib"
     language "C++"
@@ -115,10 +124,17 @@ if os.is("windows") then
         pchheader "pch.h"
         pchsource "src/backends/win32-handler/pch.cpp"
 
+    project "shaders-dx11"
+        kind "Utility"
+        files { "src/backends/shaders/dx11/*.hlsl" }
+        prebuildcommands { luajit.." src/backends/shaders/build.lua dx11 %{cfg.objdir}" }
+        dependson { "rd-common" }
+
     project "rd-dx11"
         kind "SharedLib"
         language "C++"
 
+        dependson { "shaders-dx11" }
         files {
             "src/backends/dx11/*.h",
             "src/backends/dx11/*.cpp",
@@ -165,10 +181,17 @@ if os.is("linux") then
 end
 
 if not os.is("macosx") then
+    project "shaders-vulkan"
+        kind "Utility"
+        files { "src/backends/shaders/vulkan/*.hlsl" }
+        buildcommands { luajit.." src/backends/shaders/build.lua vulkan %{cfg.objdir}" }
+        dependson { "rd-common" }
+
     project "rd-vulkan"
         kind "SharedLib"
         language "C++"
 
+        dependson { "shaders-vulkan" }
         files {
             "src/backends/vulkan/*.h",
             "src/backends/vulkan/*.cpp"

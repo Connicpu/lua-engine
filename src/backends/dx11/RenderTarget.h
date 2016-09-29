@@ -8,6 +8,7 @@ struct render_target
     com_ptr<ID3D11Texture2D> buffer;
     com_ptr<ID3D11RenderTargetView> rtv;
     com_ptr<IDXGISurface> surface;
+    com_ptr<ID2D1RenderTarget> d2d_target;
 
     depth_buffer depth;
 };

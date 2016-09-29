@@ -1,10 +1,11 @@
-local ffi = require("engine.graphics.header_builder")
+local ffi = require("engine.graphics.util.header_builder")
 
 ffi.rd_header.cdef[[
     // Mathlib structs
     typedef struct vec2 vec2;
     typedef struct matrix2d matrix2d;
     typedef struct color color;
+    typedef struct viewport viewport;
 
     // Error handling
     typedef struct renderer_error renderer_error;

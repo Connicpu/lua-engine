@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <unordered_map>
 
 namespace sg_details
 {
@@ -12,6 +13,16 @@ namespace sg_details
         }
         int32_t x, y;
     };
+
+    inline bool operator==(const coord &lhs, const coord &rhs)
+    {
+        return lhs.x == rhs.x && lhs.y == rhs.y;
+    }
+
+    inline bool operator!=(const coord &lhs, const coord &rhs)
+    {
+        return !(lhs == rhs);
+    }
 }
 
 namespace std
@@ -23,7 +34,7 @@ namespace std
         typedef sg_details::coord argument_type;
         typedef std::size_t result_type;
 
-        result_type operator()(const argument_type &key)
+        result_type operator()(const argument_type &key) const
         {
             size_t result = 2166136261;
             const uint8_t *data = (const uint8_t *)&key;

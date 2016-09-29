@@ -10,6 +10,11 @@ class cbuffer
 public:
     bool update(device *dev, const T &data);
 
+    inline ID3D11Buffer *const *addr() const
+    {
+        return &buf_.p;
+    }
+
 private:
     size_t size_;
     com_ptr<ID3D11Buffer> buf_;

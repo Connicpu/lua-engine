@@ -20,9 +20,9 @@ static std::wstring make_class(HINSTANCE hinst)
             wndc.cbClsExtra = 0;
             wndc.cbWndExtra = sizeof(window_handler *);
             wndc.hbrBackground = nullptr;
-            wndc.hCursor = LoadCursor(hinst, IDC_ARROW);
-            wndc.hIcon = LoadIcon(hinst, IDI_APPLICATION);
-            wndc.hIconSm = LoadIcon(hinst, IDI_APPLICATION);
+            wndc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+            wndc.hIcon = nullptr;
+            wndc.hIconSm = nullptr;
             wndc.hInstance = hinst;
             wndc.lpfnWndProc = wnd_proc;
             wndc.lpszClassName = name.c_str();
@@ -108,8 +108,9 @@ window_handler * rd_create_wh(const window_params * params)
 
     wh->hinst = hinst;
     wh->wnd_class = make_class(hinst);
+
     wh->hwnd = CreateWindowExW(
-        WS_EX_OVERLAPPEDWINDOW,
+        0,
         wh->wnd_class.c_str(),
         title.c_str(),
         WS_OVERLAPPEDWINDOW,

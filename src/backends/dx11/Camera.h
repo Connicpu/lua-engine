@@ -5,10 +5,10 @@
 
 struct camera
 {
-    float aspect_ratio;
     matrix2d transform;
     matrix2d cam_inverse;
     matrix2d cam_full;
+    float aspect_ratio;
     
     cbuffer<matrix2d> cam_buffer;
     bool updated;

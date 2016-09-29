@@ -1,12 +1,16 @@
 #include "pch.h"
 #include "RenderTarget.h"
 #include "Device.h"
+#include "Instance.h"
 #include <memory>
 
 framebuffer * rd_create_framebuffer(device *dev, uint32_t width, uint32_t height)
 {
     HRESULT hr;
     std::unique_ptr<framebuffer> fb(new framebuffer);
+
+    fb->texture.width = width;
+    fb->texture.height = height;
 
     auto *d3d = dev->d3d_device.p;
 
@@ -15,7 +19,7 @@ framebuffer * rd_create_framebuffer(device *dev, uint32_t width, uint32_t height
     desc.ArraySize = 1;
     desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
     desc.CPUAccessFlags = 0;
-    desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     desc.Width = width;
     desc.Height = height;
     desc.MipLevels = 1;
@@ -60,6 +64,23 @@ framebuffer * rd_create_framebuffer(device *dev, uint32_t width, uint32_t height
     tex.array = &fb->texture;
     tex.index = 0;
     fb->texture.textures.push_back(tex);
+
+    // Create the D2D target
+    hr = dev->inst->d2d_factory->CreateDxgiSurfaceRenderTarget(
+        fb->target.surface,
+        D2D1::RenderTargetProperties(
+            D2D1_RENDER_TARGET_TYPE_HARDWARE,
+            D2D1::PixelFormat(
+                desc.Format,
+                D2D1_ALPHA_MODE_PREMULTIPLIED
+            ),
+            96,
+            96
+        ),
+        &fb->target.d2d_target
+    );
+    if (FAILED(hr))
+        return set_error_and_ret(nullptr, hr);
 
     if (!rd_init_depth_buffer(dev, &fb->target.depth, fb->target.buffer))
         return nullptr;

@@ -16,11 +16,16 @@
         struct color {
             float r, g, b, a;
         };
+        struct viewport {
+            float x, y;
+            float w, h;
+        };
     
     // Mathlib structs
     typedef struct vec2 vec2;
     typedef struct matrix2d matrix2d;
     typedef struct color color;
+    typedef struct viewport viewport;
 
     // Error handling
     typedef struct renderer_error renderer_error;
@@ -376,11 +381,11 @@
     uint32_t rd_get_texture_array_count(const texture_array *set);
     bool rd_is_texture_array_streaming(const texture_array *set);
     bool rd_is_texture_array_pixel_art(const texture_array *set);
-    bool rd_set_texture_array_pixel_art(texture_array *set, bool pa);
+    void rd_set_texture_array_pixel_art(texture_array *set, bool pa);
 
     texture *rd_get_texture(texture_array *set, uint32_t index);
     texture_array *rd_get_texture_array(texture *texture);
-    void rd_update_texture(const uint8_t *data, size_t len);
+    bool rd_update_texture(device *dev, texture *texture, const uint8_t *data, size_t len);
 
 
     struct sprite_params {
@@ -389,7 +394,7 @@
         float layer;
         texture *tex;
         vec2 uv_topleft;
-        vec2 uv_topright;
+        vec2 uv_bottomright;
         matrix2d transform;
         color tint;
     };
@@ -397,13 +402,13 @@
     scene *rd_create_scene(device *dev, float grid_width, float grid_height);
     void rd_free_scene(scene *scene);
 
-    void rd_draw_scene(device *dev, scene *scene, camera *cam);
+    bool rd_draw_scene(device *dev, render_target *rt, scene *scene, camera *cam, const viewport *vp);
 
-    sprite_handle rd_create_sprite(scene *scene, sprite_params *params);
+    sprite_handle rd_create_sprite(scene *scene, const sprite_params *params);
     void rd_destroy_sprite(scene *scene, sprite_handle sprite);
 
-    void rd_get_sprite_uv(scene *scene, sprite_handle sprite, vec2 *topleft, vec2 *topright);
-    void rd_set_sprite_uv(scene *scene, sprite_handle sprite, const vec2 *topleft, const vec2 *topright);
+    void rd_get_sprite_uv(scene *scene, sprite_handle sprite, vec2 *topleft, vec2 *bottomright);
+    void rd_set_sprite_uv(scene *scene, sprite_handle sprite, const vec2 *topleft, const vec2 *bottomright);
 
     float rd_get_sprite_layer(scene *scene, sprite_handle sprite);
     void rd_set_sprite_layer(scene *scene, sprite_handle sprite, float layer);

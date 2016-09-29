@@ -5,18 +5,19 @@
 bool rd_cbuffer_update(device *dev, const void *data, size_t size, size_t &size_, com_ptr<ID3D11Buffer> &buf_)
 {
     HRESULT hr;
+    uint32_t needed_size = (uint32_t)std::ceil(size / 16.0) * 16;
 
-    if (!buf_ || size != size_)
+    if (!buf_ || needed_size != size_)
     {
         buf_.Release();
-        size_ = size;
+        size_ = needed_size;
 
         D3D11_BUFFER_DESC desc;
         desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        desc.ByteWidth = (uint32_t)size;
+        desc.ByteWidth = needed_size;
         desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         desc.MiscFlags = 0;
-        desc.StructureByteStride = (uint32_t)size;
+        desc.StructureByteStride = desc.ByteWidth;
         desc.Usage = D3D11_USAGE_DYNAMIC;
 
         D3D11_SUBRESOURCE_DATA init_data = { 0 };

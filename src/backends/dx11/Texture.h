@@ -15,20 +15,21 @@ struct texture_array
 
     bool streaming;
     bool pixel_art;
+    uint32_t width, height;
     com_ptr<ID3D11Texture2D> buffer;
     com_ptr<ID3D11ShaderResourceView> srv;
     std::vector<texture> textures;
 };
 
-extern "C" texture_array *rd_create_texture_array(device *dev, const texture_array_params *params);
-extern "C" void rd_free_texture_array(texture_array *set);
+texture_array *rd_create_texture_array(device *dev, const texture_array_params *params);
+void rd_free_texture_array(texture_array *set);
 
-extern "C" void rd_get_texture_array_size(const texture_array *set, uint32_t *width, uint32_t *height);
-extern "C" uint32_t rd_get_texture_array_count(const texture_array *set);
-extern "C" bool rd_is_texture_array_streaming(const texture_array *set);
-extern "C" bool rd_is_texture_array_pixel_art(const texture_array *set);
-extern "C" bool rd_set_texture_array_pixel_art(texture_array *set, bool pa);
+void rd_get_texture_array_size(const texture_array *set, uint32_t *width, uint32_t *height);
+uint32_t rd_get_texture_array_count(const texture_array *set);
+bool rd_is_texture_array_streaming(const texture_array *set);
+bool rd_is_texture_array_pixel_art(const texture_array *set);
+void rd_set_texture_array_pixel_art(texture_array *set, bool pa);
 
-extern "C" texture *rd_get_texture(texture_array *set, uint32_t index);
-extern "C" texture_array *rd_get_texture_array(texture *texture);
-extern "C" void rd_update_texture(const uint8_t *data, size_t len);
+texture *rd_get_texture(texture_array *set, uint32_t index);
+texture_array *rd_get_texture_array(texture *texture);
+bool rd_update_texture(device *dev, texture *texture, const uint8_t *data, size_t len);

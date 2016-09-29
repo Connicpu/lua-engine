@@ -50,7 +50,7 @@ bool rd_ib_start_upload(device * dev, uint32_t count, uint32_t isize, ib_state &
         state.cap = new_cap;
     }
 
-    memmove(state.previous_counts + 1, state.previous_counts, 7 * sizeof(size_t));
+    memmove(state.previous_counts + 1, state.previous_counts, 7 * sizeof(uint32_t));
     state.previous_counts[0] = count;
 
     hr = dev->d3d_context->Map(state.buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &state.subres);
@@ -59,17 +59,6 @@ bool rd_ib_start_upload(device * dev, uint32_t count, uint32_t isize, ib_state &
 
     state.idx = 0;
     return true;
-}
-
-void rd_ib_push(const void * data, uint32_t size, ib_state & state)
-{
-    assert(state.idx < state.cap);
-    auto offset = size * state.idx;
-    auto dst = ((uint8_t *)state.subres.pData) + offset;
-
-    memcpy(dst, data, size);
-
-    state.idx++;
 }
 
 void rd_ib_push(const void * data, uint32_t size, uint32_t count, ib_state & state)

@@ -46,6 +46,12 @@ window * rd_create_window(device * dev, const window_params * params)
     if (!init_back_buffer(dev, win.get()))
         return nullptr;
 
+    if (params->state == fullscreen)
+    {
+        //TODO
+        //rd_set_window_state(win.get(), fullscreen);
+    }
+
     return win.release();
 }
 
@@ -171,7 +177,7 @@ static bool init_back_buffer(device * dev, window * win)
     DXGI_SWAP_CHAIN_DESC1 desc;
     desc.Width = width;
     desc.Height = height;
-    desc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+    desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     desc.Stereo = false;
     desc.SampleDesc = { 1, 0 };
     desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;

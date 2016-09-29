@@ -7,7 +7,13 @@ static thread_local renderer_error last_error;
 
 void rd_set_error(int code, const char *msg)
 {
+    if (IsDebuggerPresent())
+    {
+        __debugbreak();
+    }
+
     has_last_error = true;
+    last_error.system_code = code;
     auto len = std::min(strlen(msg), ARRAYSIZE(last_error.message)-1);
     memcpy(last_error.message, msg, len);
     last_error.message[len] = 0;

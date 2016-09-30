@@ -183,8 +183,8 @@ static bool init_samplers(device * dev)
     HRESULT hr;
     D3D11_SAMPLER_DESC desc;
     desc.Filter = D3D11_FILTER_ANISOTROPIC;
-    desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    desc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+    desc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
     desc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
     desc.MipLODBias = 0;
     desc.MaxAnisotropy = 8;

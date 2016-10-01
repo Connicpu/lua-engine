@@ -6,6 +6,8 @@ EXPORTS
     rd_get_camera_transform
     rd_create_device
     rd_free_device
+    rd_process_debuglog
+    rd_next_debuglog
     rd_last_error
     rd_clear_error
     rd_poll_window_event

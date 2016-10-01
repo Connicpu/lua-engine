@@ -68,29 +68,36 @@ device *rd_create_device(const device_params *params)
         &dev->d3d_context
     );
     if (FAILED(hr))
-        return set_error_and_ret(nullptr, hr);
+        return set_error_and_ret(hr);
 
     com_ptr<IDXGIDevice> dxgi_device;
     hr = dev->d3d_device->QueryInterface(&dxgi_device);
     if (FAILED(hr))
-        return set_error_and_ret(nullptr, hr);
+        return set_error_and_ret(hr);
 
     hr = inst->d2d_factory->CreateDevice(
         dxgi_device,
         &dev->d2d_device
     );
     if (FAILED(hr))
-        return set_error_and_ret(nullptr, hr);
+        return set_error_and_ret(hr);
 
     hr = dev->d2d_device->CreateDeviceContext(
         D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,
         &dev->d2d_context
     );
     if (FAILED(hr))
-        return set_error_and_ret(nullptr, hr);
+        return set_error_and_ret(hr);
 
     if (!init_sprite_state(dev.get()))
         return nullptr;
+
+	if (params->enable_debug_mode)
+	{
+		hr = dev->d3d_device.QueryInterface(&dev->debug_log);
+		if (FAILED(hr))
+			return append_error_and_ret(set_error_and_ret(hr), "Failed to open debug logger");
+	}
 
     return dev.release();
 }
@@ -98,6 +105,48 @@ device *rd_create_device(const device_params *params)
 void rd_free_device(device *dev)
 {
     delete dev;
+}
+
+static thread_local uint64_t debuglog_max;
+static thread_local uint64_t debuglog_idx;
+static thread_local std::vector<uint8_t> last_debuglog;
+
+void rd_process_debuglog(device * dev)
+{
+	if (dev->debug_log)
+	{
+		debuglog_max = dev->debug_log->GetNumStoredMessagesAllowedByRetrievalFilter();
+		debuglog_idx = 0;
+	}
+}
+
+bool rd_next_debuglog(device * dev, debuglog_entry * entry)
+{
+	if (!dev->debug_log)
+		return false;
+
+	for (; debuglog_idx <= debuglog_max; ++debuglog_idx)
+	{
+		SIZE_T len = 0;
+
+		if (SUCCEEDED(dev->debug_log->GetMessage(debuglog_idx, nullptr, &len)))
+		{
+			last_debuglog.resize(len);
+			auto *msg = (D3D11_MESSAGE *)last_debuglog.data();
+
+			dev->debug_log->GetMessage(debuglog_idx, msg, &len);
+
+			entry->len = msg->DescriptionByteLength;
+			entry->msg = msg->pDescription;
+			entry->severity = msg->Severity;
+
+			++debuglog_idx;
+			return true;
+		}
+	}
+
+	dev->debug_log->ClearStoredMessages();
+	return false;
 }
 
 template <typename T, typename V>

@@ -10,6 +10,7 @@ struct device
     com_ptr<ID3D11DeviceContext> d3d_context;
     com_ptr<ID2D1Device> d2d_device;
     com_ptr<ID2D1DeviceContext> d2d_context;
+	com_ptr<ID3D11InfoQueue> debug_log;
 
     com_ptr<ID3D11VertexShader> sprite_vs;
     com_ptr<ID3D11PixelShader> sprite_ps;
@@ -24,4 +25,7 @@ struct device
 
 device *rd_create_device(const device_params *params);
 void rd_free_device(device *dev);
+
+void rd_process_debuglog(device *dev);
+bool rd_next_debuglog(device *dev, debuglog_entry *entry);
 

@@ -97,6 +97,10 @@ function module.run()
             print('unoccluded')
             occluded = false
         end
+
+        for sev, msg in device:debug_messages() do
+            print(string.format("[D3D Debug]: [%s] %s", sev, msg))
+        end
     until quit
 
     __rd.rd_destroy_sprite(scenes[1].scene, sprite)

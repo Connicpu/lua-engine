@@ -33,6 +33,23 @@ function Device:destroy()
     end
 end
 
+local dbgstate_t = ffi.typeof("struct{device *dev;struct debuglog_entry entry;}")
+local severity_titles = { 'ERROR', 'WARNING', 'INFO', 'MESSAGE' }
+local function dbg_severity(i)
+    return severity_titles[i] or 'CORRUPTION'
+end
+local function iter_dbg(state)
+    if __rd.rd_next_debuglog(state.dev, state.entry) then
+        local msg = ffi_string(state.entry.msg, state.entry.len)
+        local sev = dbg_severity(state.entry.severity)
+        return sev, msg
+    end
+end
+function Device:debug_messages()
+    __rd.rd_process_debuglog(self.dev)
+    return iter_dbg, dbgstate_t(self.dev)
+end
+
 Device_ct = ffi.metatype(Device_t, Device_mt)
 
 return {

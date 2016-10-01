@@ -4,52 +4,18 @@ require("engine.utility")
 
 local module = {}
 
--- TEMP!!!!
-local function build_texture(dev)
-    local ffi = require("ffi")
-    local err = require("engine.graphics.error")
-    local params = ffi.new("struct texture_array_params")
-    params.streaming = false
-    params.sprite_count = 1
-    params.sprite_width = 2
-    params.sprite_height = 2
-    params.pixel_art = true
-    local buffer = ffi.new("uint32_t[4]")
-    buffer[0] = 0xFF00FFFF
-    buffer[1] = 0xFFFF00FF
-    buffer[2] = 0xFFFFFF00
-    buffer[3] = 0xFF7F7F7F
-    local buffers = ffi.new("const uint8_t *[1]", ffi.cast("const uint8_t *", buffer))
-    params.buffers = buffers
-
-    return err.check_ptr(__rd.rd_create_texture_array(dev.dev, params))
-end
-
-local function build_sprite(scene, tary)
-    local ffi = require("ffi")
-    local err = require("engine.graphics.error")
-
-    local params = ffi.new("struct sprite_params")
-    params.tex = err.check_ptr(__rd.rd_get_texture(tary, 0))
-    params.uv_bottomright = math.vec2(1, 1)
-    params.transform = math.matrix2d.identity()
-    params.tint = math.color(1, 1, 1, 1)
-
-    return err.check_ptr(__rd.rd_create_sprite(scene.scene, params))
-end
-
 function module.run()
     local graphics = require("engine.graphics")
 
     -- Create the instance
     graphics.set_backend("rd-dx11")
-    local inst = graphics.Instance()
+    local instance = graphics.Instance()
 
     -- Choose the "best" adapter
-    local adapter = inst:best_adapter()
+    local adapter = instance:best_adapter()
 
     -- Create a device
-    local device = graphics.Device(inst, adapter, true)
+    local device = graphics.Device(instance, adapter, true)
     
     -- Create a window
     local window = graphics.Window(device, {
@@ -60,11 +26,22 @@ function module.run()
 
     local viewport = math.viewport()
     local camera = graphics.Camera(device)
-    local textures = build_texture(device)
+
+    -- TEMP!!!
+    local color = math.color
+    local textures = graphics.TextureArray.build_placeholder {
+        device = device,
+        { color.parse('Yellow'), color.parse('Cyan') },
+        { color.parse('Magenta'), color.parse('Gray') },
+    }
 
     local scenes = {}
-    scenes[1] = graphics.Scene(device, 5, 5)
-    local sprite = build_sprite(scenes[1], textures)
+    table.insert(scenes, graphics.Scene(device, 5, 5))
+
+    local sprites = {}
+    table.insert(sprites, scenes[1]:create_sprite {
+        texture = textures:get(0),
+    })
 
     local quit = false
     local occluded = false
@@ -103,7 +80,15 @@ function module.run()
         end
     until quit
 
-    __rd.rd_destroy_sprite(scenes[1].scene, sprite)
+    for i, sprite in ipairs(sprites) do
+        sprite:destroy()
+    end
+    for i, scene in ipairs(scenes) do
+        scene:destroy()
+    end
+    window:destroy()
+    device:destroy()
+    instance:destroy()
 end
 
 return module

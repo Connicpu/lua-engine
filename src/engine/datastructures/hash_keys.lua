@@ -43,7 +43,7 @@ function uint32_mt:__tostring()
 end
 
 function uint32_mt.__eq(lhs, rhs)
-    return ffi_istype(uint32_ct, lhs) and ffi_istype(uint32_ct, rhs) and lhs.value == rhs.value
+    return lhs.value == rhs.value
 end
 
 uint32_ct = ffi.metatype("struct{uint32_t value;}", uint32_mt)
@@ -61,7 +61,7 @@ function int64_mt:__tostring()
 end
 
 function int64_mt.__eq(lhs, rhs)
-    return ffi_istype(int64_ct, lhs) and ffi_istype(int64_ct, rhs) and lhs.value == rhs.value
+    return lhs.value == rhs.value
 end
 
 int64_ct = ffi.metatype("struct{int64_t value;}", int64_mt)
@@ -79,7 +79,7 @@ function uint64_mt:__tostring()
 end
 
 function uint64_mt.__eq(lhs, rhs)
-    return ffi_istype(uint64_ct, lhs) and ffi_istype(uint64_ct, rhs) and lhs.value == rhs.value
+    return lhs.value == rhs.value
 end
 
 uint64_ct = ffi.metatype("struct{uint64_t value;}", uint64_mt)

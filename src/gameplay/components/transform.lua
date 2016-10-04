@@ -13,7 +13,6 @@ ffi.cdef[[
         float scale;
         float rotation;
         entity_t parent;
-        bool updated;
 
         matrix2d transform;
         matrix2d self_transform;
@@ -31,7 +30,6 @@ function Transform:initialize()
     self.scale    = 1
     self.rotation = 1
     self.parent   = entity.empty
-    self.updated  = true
 end
 
 function Transform:update()
@@ -72,4 +70,6 @@ function Transform:deserialize(state)
 end
 
 Transform_ct = ffi.metatype()
-Transform_id = scomp.define("Transform", Transform_ct)
+Transform_id = scomp.define("transform", Transform_ct, false)
+
+return Transform_id

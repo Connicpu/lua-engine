@@ -1,4 +1,4 @@
-require("engine.class")
+require("class")
 require("engine.math")
 require("engine.utility")
 

@@ -87,7 +87,7 @@ local function build_type(value_t, needs_dtor)
         return ffi_new(value_t, self.data:get(i))
     end
 
-    local function iter(self, i)
+    function VecMap:next(i)
         repeat
             i = i + 1
         until i > self.exists.len or self.exists:get(i).exists
@@ -95,6 +95,10 @@ local function build_type(value_t, needs_dtor)
         if i <= self.exists.len then
             return i, self.data:get(i)
         end
+    end
+
+    local function iter(self, i)
+        return self:next(i)
     end
 
     function VecMap_mt.__ipairs()

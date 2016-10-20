@@ -37,6 +37,7 @@ filter "configurations:Debug"
 
 filter "configurations:Release"
     defines { "NDEBUG" }
+    flags { "Symbols" }
     optimize "On"
 
 filter "configurations:Deploy"

@@ -1,7 +1,8 @@
 local system = require("engine.system")
 local filters = require("engine.filters")
 
-local UpdateTransforms = system.System()
+local UpdateTransforms = system.System("UpdateTransforms")
+UpdateTransforms.events = {"update"}
 
 function UpdateTransforms:process(data, event)
     local transforms = data.components.transform

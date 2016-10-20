@@ -1,13 +1,14 @@
 #pragma once
 
-#import <Foundation/Foundation.h>
-#import <Metal/Metal.h>
-#include <backends/common/renderer.h>
+#include "platform.h"
 
-@interface CNNRDevice : NSObject {
-    id<MTLDevice> device;
-}
+@class CNNRTextureArray;
 
--(id)initWithParams:(const device_params *)params;
+@interface CNNRDevice : NSObject
+
+@property (readonly) id<MTLDevice> device;
+
+-(void)bindQuadShader;
+-(void)bindTexture:(CNNRTextureArray *array);
 
 @end

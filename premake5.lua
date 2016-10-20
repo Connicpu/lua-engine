@@ -176,7 +176,8 @@ if os.is("macosx") then
     project "rd-metal"
         kind "SharedLib"
         language "C++"
-
+        defines { "MACOS" }
+        
         files {
             "src/backends/metal/*.h",
             "src/backends/metal/*.cpp",

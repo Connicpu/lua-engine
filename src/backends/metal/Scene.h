@@ -1,4 +1,10 @@
 #pragma once
 
-#import <Foundation/Foundation.h>
-#include <backends/common/renderer.h>
+#include "platform.h"
+#include "Sprite.h"
+
+@interface CNNRScene : NSObject
+
+-(instancetype)initWithSize:(vec2)size;
+
+@end

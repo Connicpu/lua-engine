@@ -2,7 +2,7 @@ local ffi = require("ffi")
 local io = require("io")
 
 local rd_file
-ffi.rd_header = {}
+ffi.rd_header = { cpp_only = {} }
 
 function ffi.rd_header.begin()
     local err
@@ -13,9 +13,13 @@ function ffi.rd_header.begin()
 
     rd_file:write[[
         #pragma once
-        #ifdef __cplusplus
+        #include <stddef.h>
         #include <stdint.h>
+        #ifdef __cplusplus
+        #define RD_IF_CPP(x) x
         extern "C" {
+        #else
+        #define RD_IF_CPP(x) 
         #endif
 
         struct vec2 {
@@ -38,10 +42,12 @@ function ffi.rd_header.begin()
 end
 
 function ffi.rd_header.cdef(def)
-    ffi.cdef(def)
+    local ffi_def = string.gsub(def, "#ENUM", "")
+    local cpp_def = string.gsub(def, "#ENUM", "RD_IF_CPP(:int)")
+    ffi.cdef(ffi_def)
     if rd_file then
         rd_file:write("\n")
-        rd_file:write(def)
+        rd_file:write(cpp_def)
         rd_file:write("\n")
     end
 end
@@ -50,6 +56,7 @@ function ffi.rd_header.finish()
     rd_file:write[[
         #ifdef __cplusplus
         }
+        #include "helpers.h"
         #endif
     ]]
     rd_file:close()

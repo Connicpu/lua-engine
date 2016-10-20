@@ -12,7 +12,7 @@ ffi.rd_header.cdef[[
         char device_name[64];
     };
 
-    enum window_state {
+    enum window_state #ENUM {
         windowed = 0,
         borderless = 1,
         fullscreen = 2,

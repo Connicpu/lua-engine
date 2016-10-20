@@ -24,16 +24,16 @@ ffi.rd_header.cdef[[
     // Window
     typedef struct window window;
     typedef struct window_params window_params;
-    typedef enum window_state window_state;
+    typedef enum window_state #ENUM window_state;
     typedef struct adapter_output adapter_output;
     typedef uint64_t output_id;
 
     // Window events
     typedef struct window_event window_event;
-    typedef enum event_type event_type;
-    typedef enum mouse_button mouse_button;
-    typedef enum element_state element_state;
-    typedef enum virtual_key_code virtual_key_code;
+    typedef enum event_type #ENUM event_type;
+    typedef enum mouse_button #ENUM mouse_button;
+    typedef enum element_state #ENUM element_state;
+    typedef enum virtual_key_code #ENUM virtual_key_code;
 
     // Texture
     typedef struct texture_array_params texture_array_params;

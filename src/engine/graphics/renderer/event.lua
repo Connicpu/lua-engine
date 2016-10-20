@@ -4,7 +4,7 @@ ffi.rd_header.cdef[[
     bool rd_poll_window_event(window *window, window_event *event);
     void rd_free_window_event(window_event *event);
 
-    enum event_type {
+    enum event_type #ENUM {
         EVENT_CLOSED,
 
         EVENT_WINDOW_RESIZED,
@@ -22,7 +22,7 @@ ffi.rd_header.cdef[[
         EVENT_DPI_CHANGED,
     };
 
-    enum mouse_button {
+    enum mouse_button #ENUM {
         Mb_Left,
         Mb_Right,
         Mb_Middle,
@@ -30,12 +30,12 @@ ffi.rd_header.cdef[[
         Mb_X2,
     };
 
-    enum element_state {
+    enum element_state #ENUM {
         ELEM_PRESSED,
         ELEM_RELEASED,
     };
 
-    enum virtual_key_code
+    enum virtual_key_code #ENUM
     {
         Vk_Key0,
         Vk_Key1,

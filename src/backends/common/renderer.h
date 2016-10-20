@@ -1,7 +1,11 @@
         #pragma once
-        #ifdef __cplusplus
+        #include <stddef.h>
         #include <stdint.h>
+        #ifdef __cplusplus
+        #define RD_IF_CPP(x) x
         extern "C" {
+        #else
+        #define RD_IF_CPP(x) 
         #endif
 
         struct vec2 {
@@ -44,16 +48,16 @@
     // Window
     typedef struct window window;
     typedef struct window_params window_params;
-    typedef enum window_state window_state;
+    typedef enum window_state RD_IF_CPP(:int) window_state;
     typedef struct adapter_output adapter_output;
     typedef uint64_t output_id;
 
     // Window events
     typedef struct window_event window_event;
-    typedef enum event_type event_type;
-    typedef enum mouse_button mouse_button;
-    typedef enum element_state element_state;
-    typedef enum virtual_key_code virtual_key_code;
+    typedef enum event_type RD_IF_CPP(:int) event_type;
+    typedef enum mouse_button RD_IF_CPP(:int) mouse_button;
+    typedef enum element_state RD_IF_CPP(:int) element_state;
+    typedef enum virtual_key_code RD_IF_CPP(:int) virtual_key_code;
 
     // Texture
     typedef struct texture_array_params texture_array_params;
@@ -113,7 +117,7 @@
     bool rd_poll_window_event(window *window, window_event *event);
     void rd_free_window_event(window_event *event);
 
-    enum event_type {
+    enum event_type RD_IF_CPP(:int) {
         EVENT_CLOSED,
 
         EVENT_WINDOW_RESIZED,
@@ -131,7 +135,7 @@
         EVENT_DPI_CHANGED,
     };
 
-    enum mouse_button {
+    enum mouse_button RD_IF_CPP(:int) {
         Mb_Left,
         Mb_Right,
         Mb_Middle,
@@ -139,12 +143,12 @@
         Mb_X2,
     };
 
-    enum element_state {
+    enum element_state RD_IF_CPP(:int) {
         ELEM_PRESSED,
         ELEM_RELEASED,
     };
 
-    enum virtual_key_code
+    enum virtual_key_code RD_IF_CPP(:int)
     {
         Vk_Key0,
         Vk_Key1,
@@ -446,7 +450,7 @@
         char device_name[64];
     };
 
-    enum window_state {
+    enum window_state RD_IF_CPP(:int) {
         windowed = 0,
         borderless = 1,
         fullscreen = 2,
@@ -477,5 +481,6 @@
 
         #ifdef __cplusplus
         }
+        #include "helpers.h"
         #endif
     

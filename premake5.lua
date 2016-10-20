@@ -5,14 +5,21 @@ workspace "lua-engine"
     warnings "Extra"
 
     libdirs {
-        "$(CONNORLIB_HOME)/bin/%{cfg.system}/%{cfg.platform}",
+        --"$(CONNORLIB_HOME)/bin/%{cfg.system}/%{cfg.platform}",
         "vendor/bin/%{cfg.system}_%{cfg.platform}",
     }
-    includedirs {
+
+    local includes = {
         "$(CONNORLIB_HOME)/include",
         "vendor/include",
         "src",
     }
+    if os.is("macosx") then
+        defines { "OBJC" }
+        sysincludedirs(includes)
+    else
+        includedirs(includes)
+    end
 
     configurations { "Debug", "Release", "Deploy" }
 
@@ -52,7 +59,12 @@ filter "action:vs*"
 filter "not action:vs*"
     toolset "clang"
     buildoptions { "-std=c++14" }
-    postbuildcommands { "build/%{cfg.system}/postbuild.sh" }
+    if os.is("macosx") then
+        buildoptions { "-fobjc-arc" }
+        postbuildcommands { "build/macosx/postbuild.sh" }
+    else
+        postbuildcommands { "build/linux/postbuild.sh" }
+    end
 
 ---------------------------------------
 -- Launcher
@@ -66,7 +78,10 @@ project "launcher"
         "src/launcher/*.cpp"
     }
 
-    links { "lua51" }
+    filter "action:vs*"
+        links { "lua51" }
+    filter "not action:vs*"
+        links { "luajit" } 
 
     -- Ensure building of the graphics libraries
     filter "system:windows"
@@ -88,6 +103,9 @@ project "launcher"
             "/entry:WinMainCRTStartup",
         }
         files { "src/launcher/app.manifest" }
+
+    filter "not action:vs*"
+        removefiles { "src/launcher/winmain.cpp" }
 
 ---------------------------------------
 -- Backends

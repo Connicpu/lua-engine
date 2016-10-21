@@ -289,7 +289,7 @@ public:
     void updated_field(handle obj)
     {
         auto &space = *lookup(obj);
-        auto *tary = obj->tex->array;
+        auto *tary = rd_get_texture_array(obj->tex);
         switch (obj->type)
         {
             case sprite_class::standard:
@@ -310,7 +310,7 @@ private:
         vec2 pos = position_of(obj);
         coord c = get_coord(pos);
         grid_space &space = *ensure_space(c);
-        texture_array *tary = obj->tex->array;
+        texture_array *tary = rd_get_texture_array(obj->tex);
         switch (obj->type)
         {
             case sprite_class::standard:
@@ -348,7 +348,7 @@ private:
         vec2 pos = position_of(obj);
         coord c = get_coord(pos);
         grid_space &space = *ensure_space(c);
-        texture_array *tary = obj->tex->array;
+        texture_array *tary = rd_get_texture_array(obj->tex);
         bool mark_removal = false;
         switch (obj->type)
         {

@@ -1,8 +1,6 @@
-#pragma once
-
-#include "platform.h"
-#include "Sprite.h"
-#include <backends/common/scene_graph.h>
+#import "platform.h"
+#import "Sprite.h"
+#import <backends/common/scene_graph.h>
 
 @interface CNNRScene : NSObject
 

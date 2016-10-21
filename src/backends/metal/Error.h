@@ -1,6 +1,4 @@
-#pragma once
-
-#include <backends/common/renderer.h>
+#import <backends/common/renderer.h>
 
 void rd_set_error(int code, const char *msg);
 void rd_append_error(const char *msg);

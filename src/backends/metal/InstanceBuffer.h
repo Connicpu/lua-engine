@@ -1,6 +1,4 @@
-#pragma once
-
-#include "platform.h"
+#import "platform.h"
 
 struct ib_state
 {

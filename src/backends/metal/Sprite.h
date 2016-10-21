@@ -1,7 +1,5 @@
-#pragma once
-
-#include "platform.h"
-#include <backends/common/scene_graph.h>
+#import "platform.h"
+#import <backends/common/scene_graph.h>
 
 struct sprite_vertex
 {

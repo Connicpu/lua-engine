@@ -1,4 +1,4 @@
-#include "Instance.h"
+#import "CNNRInstance.h"
 
 @implementation CNNRInstance
 

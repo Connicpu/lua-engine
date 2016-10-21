@@ -1,7 +1,5 @@
-#pragma once
-
 #import <Foundation/Foundation.h>
-#include <backends/common/renderer.h>
+#import <backends/common/renderer.h>
 
 @interface CNNRInstance : NSObject
 // Do I even need anything here?

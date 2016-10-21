@@ -1,5 +1,5 @@
-#include "InstanceBuffer.h"
-#include "Device.h"
+#import "InstanceBuffer.h"
+#import "CNNRDevice.h"
 
 ib_state::ib_state()
 {

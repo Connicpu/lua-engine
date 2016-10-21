@@ -1,5 +1,5 @@
-#include "Texture.h"
-#include "Device.h"
+#import "CNNRTexture.h"
+#import "CNNRDevice.h"
 
 @implementation CNNRTextureArray
 

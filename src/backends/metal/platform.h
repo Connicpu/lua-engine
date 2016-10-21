@@ -1,8 +1,6 @@
-#pragma once
-
-#include <cassert>
+#import <cassert>
 #import <Foundation/Foundation.h>
 #import <Metal/Metal.h>
-#include <backends/common/renderer.h>
-#include <backends/common/optional.h>
-#include "Error.h"
+#import <backends/common/renderer.h>
+#import <backends/common/optional.h>
+#import "Error.h"

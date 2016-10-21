@@ -1,5 +1,5 @@
-#include "Device.h"
-#include "Sprite.h"
+#import "CNNRDevice.h"
+#import "Sprite.h"
 
 static sprite_vertex kQuadVertices[] =
 {

@@ -89,7 +89,8 @@
 
 @end
 
-texture_array *rd_create_texture_array(device *dev, const texture_array_params *params)
+texture_array *rd_create_texture_array(device *dev,
+                                       const texture_array_params *params)
 {
     auto device = ref_objc<CNNRDevice>(dev);
     auto texture = [[CNNRTextureArray alloc] initWithParams:params
@@ -102,7 +103,9 @@ void rd_free_texture_array(texture_array *set)
     drop(into_objc<CNNRTextureArray>(set));
 }
 
-void rd_get_texture_array_size(const texture_array *set, uint32_t *width, uint32_t *height)
+void rd_get_texture_array_size(const texture_array *set,
+                               uint32_t *width,
+                               uint32_t *height)
 {
     auto texture = ref_objc<CNNRTextureArray>(set);
     *width = texture.width;
@@ -148,7 +151,8 @@ texture_array *rd_get_texture_array(texture *tex)
     return ref_objc<texture_array>(texture.array);
 }
 
-bool rd_update_texture(device *, texture *tex, const uint8_t *data, size_t len)
+bool rd_update_texture(device *, texture *tex,
+                       const uint8_t *data, size_t len)
 {
     auto texture = ref_objc<CNNRTexture>(tex);
     assert(len == texture.array.width * texture.array.height * 4);

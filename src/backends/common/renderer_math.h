@@ -4,7 +4,6 @@
 #include <cmath>
 #include <cassert>
 
-#pragma region vec2
 
 inline float dot(vec2 lhs, vec2 rhs)
 {
@@ -71,10 +70,6 @@ inline vec2 operator-(vec2 self)
     return vec2{ -self.x, -self.y };
 }
 
-#pragma endregion
-
-#pragma region matrix2d
-
 inline matrix2d identity()
 {
     return matrix2d
@@ -129,8 +124,8 @@ inline matrix2d rotation(float θ, vec2 center = vec2{ 0, 0 })
 
 inline matrix2d skew(float θx, float θy, vec2 center = vec2{ 0, 0 })
 {
-    auto tanx = tan(θx);
-    auto tany = tan(θy);
+    auto tanx = std::tanf(θx);
+    auto tany = std::tanf(θy);
     auto x = center.x;
     auto y = center.y;
 
@@ -201,5 +196,3 @@ inline matrix2d operator*(const matrix2d &m1, const matrix2d &m2)
         m2.m31 + m2.m11 * m1.m31 + m2.m21 * m1.m32, m2.m32 + m2.m12 * m1.m31 + m2.m22 * m1.m32,
     };
 }
-
-#pragma endregion

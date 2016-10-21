@@ -8,7 +8,20 @@
 
 @property (readonly) id<MTLDevice> device;
 
--(void)bindQuadShader;
--(void)bindTexture:(CNNRTextureArray *array);
+-(void)startCommands;
+-(void)useNormalShader;
+-(void)usePixelArtShader;
+-(void)setTexture:(CNNRTextureArray *)array;
+-(void)drawWithInstances:(id<MTLBuffer>)instances;
+-(void)commitCommands;
 
 @end
+
+#ifdef MACOS
+constexpr MTLResourceOptions kResourceOptions = MTLResourceStorageModeManaged;
+constexpr MTLStorageMode kStorageMode = MTLStorageModeManaged;
+#else
+constexpr MTLResourceOptions kResourceOptions = MTLResourceStorageModeShared;
+constexpr MTLStorageMode kStorageMode = MTLStorageModeShared;
+#endif
+

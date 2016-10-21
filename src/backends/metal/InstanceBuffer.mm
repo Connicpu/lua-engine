@@ -28,7 +28,7 @@ bool rd_ib_start_upload(device *pdev, uint32_t count, uint32_t isize, ib_state &
     if (count == 0)
         return set_error_and_ret(false, "Cannot create an instance buffer of size 0");
 
-    auto dev = as_objc<CNNRDevice>(pdev);
+    auto dev = ref_objc<CNNRDevice>(pdev);
 
     if (should_resize(count, state))
     {
@@ -36,15 +36,9 @@ bool rd_ib_start_upload(device *pdev, uint32_t count, uint32_t isize, ib_state &
         uint32_t new_cap = uint32_t(count * 1.5);
         NSUInteger byte_cap = (NSUInteger)(new_cap * isize);
         
-        #ifdef MACOS
-        auto storage = MTLResourceStorageModeManaged;
-        #else
-        auto storage = MTLResourceStorageModeShared;
-        #endif
-
         // Create the buffer
-        state.buffer = [dev.device newBufferWithLength:byte_cap,
-                                               options:bufferFlag];
+        state.buffer = [dev.device newBufferWithLength:byte_cap
+                                               options:kResourceOptions];
         if (state.buffer == nil)
             return set_error_and_ret(false, "Failed to create Metal buffer");
 

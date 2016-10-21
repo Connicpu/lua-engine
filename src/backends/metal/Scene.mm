@@ -2,27 +2,25 @@
 #include "InstanceBuffer.h"
 #include <backends/common/scene_graph.h>
 
-struct error_interface
-{
-    template <typename T>
-    static T append_ret(T ret, const char *msg)
-    {
-        return append_error_and_ret(ret, msg);
-    }
-};
-
 @implementation CNNRScene
 {
-    std::optional<scene_graph<
+    scene_graph<
         sprite_object,
         sprite_instance,
         InstanceBuffer,
         error_interface
-    >> graph;
+    > _graph;
 }
 
--(instancetype)initWithSize:(vec2)size {
-    self.graph = { size };
+-(instancetype)initWithSize:(vec2)size
+{
+    self = [super init];
+    if (self)
+    {
+        _graph.init(size);
+    }
+    return self;
 }
 
 @end
+

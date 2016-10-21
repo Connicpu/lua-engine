@@ -23,7 +23,7 @@ public:
     void push(const T &item);
     void push(const T *data, uint32_t count);
     bool finish(device *dev);
-    void bind(device *dev, UINT slot) const;
+    void bind(device *dev, uint32_t slot) const;
 
     void deactivate();
     uint32_t count() const;
@@ -62,12 +62,13 @@ inline bool InstanceBuffer<T>::finish(device *dev)
 }
 
 template<typename T>
-inline void InstanceBuffer<T>::bind(device *dev, UINT slot) const
+inline void InstanceBuffer<T>::bind(device *dev, uint32_t slot) const
 {
     //UINT strides[] = { sizeof(T) };
     //UINT offsets[] = { 0 };
     //dev->d3d_context->IASetVertexBuffers(slot, 1, &state.buffer.p, strides, offsets);
-    
+    drop(dev);
+    drop(slot);
     // TODO
 }
 

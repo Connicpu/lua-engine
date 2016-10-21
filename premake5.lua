@@ -182,10 +182,13 @@ if os.is("macosx") then
             "src/backends/metal/*.h",
             "src/backends/metal/*.cpp",
             "src/backends/metal/*.mm",
-            "src/backends/metal/*.m"
+            "src/backends/metal/*.m",
+            "src/backends/metal/*.metal",
         }
         links {
-            "rd-common"
+            "rd-common",
+            "Foundation.framework",
+            "Metal.framework",
         }
 end
 

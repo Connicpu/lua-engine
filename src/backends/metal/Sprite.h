@@ -55,7 +55,7 @@ struct sprite_object
         inst.uv0 = uv0;
         inst.uv1 = uv1;
         inst.layer = layer;
-        inst.texture_id = tex->index;
+        //inst.texture_id = tex->index;
         return inst;
     }
 };

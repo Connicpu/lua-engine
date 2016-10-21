@@ -1,9 +1,7 @@
 #include "Device.h"
 #include "Sprite.h"
 
-static const long kInFlightCommandBuffers = 3;
-
-static const sprite_vertex kQuadVertices[] =
+static sprite_vertex kQuadVertices[] =
 {
     { vec2{ -0.5f, 0.5f }, vec2{ 0, 0 } },
     { vec2{ -0.5f, -0.5f }, vec2{ 0, 1 } },
@@ -20,11 +18,44 @@ static const sprite_vertex kQuadVertices[] =
     id<MTLDevice> _device;
     id<MTLCommandQueue> _commandQueue;
     id<MTLLibrary> _shaders;
-    id<MTLRenderPipelineState> _pipelineState;
+    id<MTLRenderPipelineState> _normalPipeline;
+    id<MTLRenderPipelineState> _pixelArtPipeline;
     id<MTLBuffer> _quadVertexBuffer;
+    
+    id<MTLCommandBuffer> _currentCmdBuffer;
 }
 
--(instancetype)initWithParams:(const device_params *)params {
+-(void)startCommands
+{
+}
+
+-(void)useNormalShader
+{
+    
+}
+
+-(void)usePixelArtShader
+{
+    
+}
+
+-(void)setTexture:(CNNRTextureArray *)array
+{
+    drop(array);
+}
+
+-(void)drawWithInstances:(id<MTLBuffer>)instances
+{
+    drop(instances);
+}
+
+-(void)commitCommands
+{
+    
+}
+
+-(instancetype)initWithParams:(const device_params *)params
+{
     drop(params); // I don't know what to do with these yet
     
     self = [super init];
@@ -38,41 +69,50 @@ static const sprite_vertex kQuadVertices[] =
     return self;
 }
 
--(bool)initDeviceState {
-    self._device = MTLCreateSystemDefaultDevice();
-    if (self._device == nil)
+-(bool)initDeviceState
+{
+    _device = MTLCreateSystemDefaultDevice();
+    if (_device == nil)
         return set_error_and_ret(false, "Failed to create Metal device");
 
-    self._commandQueue = [self._device makeCommandQueue];
+    _commandQueue = [_device newCommandQueue];
+    
+    return true;
 }
 
--(bool)initShaders {
-    self._shaders = [self._device newDefaultLibrary];
+-(bool)initShaders
+{
+    _shaders = [_device newDefaultLibrary];
 
     auto pipeDesc = [MTLRenderPipelineDescriptor new];
     pipeDesc.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
-    pipeDesc.vertexFunction = [self._shaders newFunctionWithName:@"SpriteVertex"];
-    pipeDesc.fragmentFunction = [self._shaders newFunctionWithName:@"SpriteFragment"];
+    pipeDesc.vertexFunction = [_shaders newFunctionWithName:@"SpriteVertex"];
+    pipeDesc.fragmentFunction = [_shaders newFunctionWithName:@"SpriteFragment"];
 
     NSError *error = [[NSError alloc] init];
-    self._pipelineState = [self._device newRenderPipelineState:pipeDesc,
-                                                         error:&error];
+    _normalPipeline = [_device newRenderPipelineStateWithDescriptor:pipeDesc
+                                                              error:&error];
+    
+    pipeDesc.fragmentFunction = [_shaders newFunctionWithName:@"SpritePixelFragment"];
+    
+    error = [[NSError alloc] init];
+    _pixelArtPipeline = [_device newRenderPipelineStateWithDescriptor:pipeDesc
+                                                                error:&error];
+    
+    return true;
     
 }
 
--(bool)initBuffers {
-    #ifdef MACOS
-    auto storage = MTLResourceStorageModeShared;
-    #else
-    auto storage = MTLResourceStorageModeManaged;
-    #endif
-
-    self._quadVertexBuffer = [self._device newBufferWithBytesNoCopy:kQuadVertices,
-                                                             length:sizeof(kQuadVertices),
-                                                            options:storage,
-                                                        deallocator:nil];
-    if (self._quadVertexBuffer == nil)
+-(bool)initBuffers
+{
+    _quadVertexBuffer = [_device newBufferWithBytesNoCopy:kQuadVertices
+                                                   length:sizeof(kQuadVertices)
+                                                  options:kResourceOptions
+                                              deallocator:nil];
+    if (_quadVertexBuffer == nil)
         return set_error_and_ret(false, "Failed to create Vertex Buffer");
+    
+    return true;
 }
 
 @end

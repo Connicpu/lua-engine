@@ -15,11 +15,9 @@ enum class sprite_class
     translucents,
 };
 
-template <typename object, typename instance, template <typename I> typename instance_buffer, typename errors>
+template <typename object, typename instance, template <class I> class instance_buffer, typename errors>
 class scene_graph
 {
-    #pragma region typedefs
-
     template <typename K, typename V>
     using hashmap = std::unordered_map<K, V>;
     template <typename T>
@@ -32,11 +30,9 @@ public:
     using handle = object*;
     using unordered_batch = hashmap<texture_array *, instance_buffer<instance>>;
     using ordered_batch = vec<std::pair<texture_array *, instance_buffer<instance>>>;
-
+    
     scene_graph(const scene_graph &) = delete;
     scene_graph &operator=(const scene_graph &) = delete;
-
-    #pragma endregion
 
 private:
     struct opaque_group
@@ -93,10 +89,21 @@ public:
         auto end() { return graph->to_be_rendered_items.end(); }
         const scene_graph *graph;
     };
+    
+    inline scene_graph()
+        : scene_graph(vec2{1.f, 1.f})
+    {
+    }
 
     inline scene_graph(vec2 grid_size)
         : grid_size(grid_size)
     {
+    }
+    
+    inline void init(vec2 grid_size)
+    {
+        assert(groups.empty());
+        this->grid_size = grid_size;
     }
 
     bool prepare_rendering(device *dev, camera *cam)

@@ -38,7 +38,7 @@ namespace std
         {
             size_t result = 2166136261;
             const uint8_t *data = (const uint8_t *)&key;
-            for (int i = 0; i < sizeof(argument_type); ++i)
+            for (size_t i = 0; i < sizeof(argument_type); ++i)
                 result = (result * 16777619) ^ data[i];
             return result;
         }

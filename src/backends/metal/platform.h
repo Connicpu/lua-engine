@@ -5,3 +5,4 @@
 #import <Metal/Metal.h>
 #include <backends/common/renderer.h>
 #include <backends/common/optional.h>
+#include "Error.h"

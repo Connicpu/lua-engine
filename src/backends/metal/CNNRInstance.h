@@ -1,5 +1,4 @@
-#import <Foundation/Foundation.h>
-#import <backends/common/renderer.h>
+#import "platform.h"
 
 @interface CNNRInstance : NSObject
 // Do I even need anything here?

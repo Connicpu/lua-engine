@@ -1,6 +1,6 @@
 #import "CNNRScene.h"
 #import "InstanceBuffer.h"
-#import <backends/common/scene_graph.h>
+#import "backends/common/scene_graph.h"
 
 @implementation CNNRScene
 {

@@ -1,6 +1,5 @@
 #import "platform.h"
 #import "Sprite.h"
-#import <backends/common/scene_graph.h>
 
 @interface CNNRScene : NSObject
 

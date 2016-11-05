@@ -5,21 +5,15 @@ workspace "lua-engine"
     warnings "Extra"
 
     libdirs {
-        --"$(CONNORLIB_HOME)/bin/%{cfg.system}/%{cfg.platform}",
         "vendor/bin/%{cfg.system}_%{cfg.platform}",
     }
 
-    local includes = {
-        "$(CONNORLIB_HOME)/include",
+    sysincludedirs {
         "vendor/include",
+    }
+    includedirs {
         "src",
     }
-    if os.is("macosx") then
-        defines { "OBJC" }
-        sysincludedirs(includes)
-    else
-        includedirs(includes)
-    end
 
     configurations { "Debug", "Release", "Deploy" }
 
@@ -176,7 +170,7 @@ if os.is("macosx") then
     project "rd-metal"
         kind "SharedLib"
         language "C++"
-        defines { "MACOS" }
+        defines { "MACOS", "OBJC" }
         
         files {
             "src/backends/metal/*.h",

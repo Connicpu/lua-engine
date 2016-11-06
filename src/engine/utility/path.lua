@@ -81,10 +81,10 @@ ffi.cdef[[
         PMeta *_meta;
     };
 
-    PathObj path_temp_obj(const char *str, size_t len);
+    void path_temp_obj(const char *str, size_t len, PathObj *output);
     PBuf *path_empty();
     PBuf *ppath_clone(const PBuf *buf);
-    PBuf *path_buf_from_obj(PathObj path);
+    PBuf *path_buf_from_obj(const PathObj &path);
     PBuf *path_create(const char *path, size_t len);
     void path_free(PBuf *buf);
 
@@ -92,43 +92,43 @@ ffi.cdef[[
     bool path_pop(PBuf *buf);
     bool path_set_file_name(PBuf *buf, const char *name, size_t len);
     bool path_set_extension(PBuf *buf, const char *ext, size_t len);
-    PathObj path_buf_to_obj(PBuf *buf);
+    void path_buf_to_obj(PBuf *buf, PathObj *output);
 
-    const char *path_to_str(PathObj path, size_t *len);
+    const char *path_to_str(const PathObj &path, size_t *len);
 
-    bool path_is_absolute(PathObj path);
-    bool path_is_relative(PathObj path);
-    bool path_has_root(PathObj path);
-    bool path_starts_with(PathObj path, PathObj start);
-    bool path_ends_with(PathObj path, PathObj end);
-    bool path_exists(PathObj path);
-    bool path_is_file(PathObj path);
-    bool path_is_dir(PathObj path);
-    PathObj path_parent(PathObj path);
-    PathObj path_strip_prefix(PathObj path, PathObj prefix);
-    const char *path_file_name(PathObj path, size_t *len);
-    const char *path_file_stem(PathObj path, size_t *len);    
-    const char *path_extension(PathObj path, size_t *len);    
+    bool path_is_absolute(const PathObj &path);
+    bool path_is_relative(const PathObj &path);
+    bool path_has_root(const PathObj &path);
+    bool path_starts_with(const PathObj &path, const PathObj &start);
+    bool path_ends_with(const PathObj &path, const PathObj &end);
+    bool path_exists(const PathObj &path);
+    bool path_is_file(const PathObj &path);
+    bool path_is_dir(const PathObj &path);
+    void path_parent(const PathObj &path, PathObj *output);
+    void path_strip_prefix(const PathObj &path, const PathObj &prefix, PathObj *output);
+    const char *path_file_name(const PathObj &path, size_t *len);
+    const char *path_file_stem(const PathObj &path, size_t *len);    
+    const char *path_extension(const PathObj &path, size_t *len);    
 
-    PBuf *path_join(PathObj left, PathObj right);
-    PBuf *path_with_file_name(PathObj path, const char *name, size_t len);
-    PBuf *path_with_extension(PathObj path, const char *name, size_t len);
-    PBuf *path_canonicalize(PathObj path);
-    PBuf *path_read_link(PathObj path);
+    PBuf *path_join(const PathObj &left, const PathObj &right);
+    PBuf *path_with_file_name(const PathObj &path, const char *name, size_t len);
+    PBuf *path_with_extension(const PathObj &path, const char *name, size_t len);
+    PBuf *path_canonicalize(const PathObj &path);
+    PBuf *path_read_link(const PathObj &path);
 
-    uint64_t path_copy(PathObj from, PathObj to);
-    bool path_create_dir(PathObj path);
-    bool path_create_dir_all(PathObj path);
-    bool path_remove_dir(PathObj path);
-    bool path_remove_dir_all(PathObj path);
-    bool path_remove_file(PathObj path);
-    bool path_rename(PathObj from, PathObj to);
-    bool path_hard_link(PathObj src, PathObj dst);
-    bool path_symlink_file(PathObj src, PathObj dst);
-    bool path_symlink_dir(PathObj src, PathObj dst);
+    uint64_t path_copy(const PathObj &from, const PathObj &to);
+    bool path_create_dir(const PathObj &path);
+    bool path_create_dir_all(const PathObj &path);
+    bool path_remove_dir(const PathObj &path);
+    bool path_remove_dir_all(const PathObj &path);
+    bool path_remove_file(const PathObj &path);
+    bool path_rename(const PathObj &from, const PathObj &to);
+    bool path_hard_link(const PathObj &src, const PathObj &dst);
+    bool path_symlink_file(const PathObj &src, const PathObj &dst);
+    bool path_symlink_dir(const PathObj &src, const PathObj &dst);
 
-    PMeta *path_metadata(PathObj path);
-    PMeta *path_symlink_metadata(PathObj path);
+    PMeta *path_metadata(const PathObj &path);
+    PMeta *path_symlink_metadata(const PathObj &path);
     MetaFileType path_meta_file_type(const PMeta *meta);
     bool path_meta_is_file(const PMeta *meta);
     bool path_meta_is_dir(const PMeta *meta);
@@ -138,7 +138,7 @@ ffi.cdef[[
     int64_t path_meta_created(const PMeta *meta);
     void path_free_metadata(PMeta *meta);
 
-    ReadDir *path_read_dir(PathObj path);
+    ReadDir *path_read_dir(const PathObj &path);
     PBuf *path_read_dir_next(ReadDir *rd);
     void path_free_read_dir(ReadDir *rd);
 ]]
@@ -162,12 +162,13 @@ local function pathify(path)
         return path
     elseif ffi_istype(PathBuf_ct, path) then
         if not path._has_po then
-            path._po = plib.path_buf_to_obj(path._buf)
+            plib.path_buf_to_obj(path._buf, path._po)
             path._has_po = true
         end
         return path._po
     elseif type(path) == 'string' then
-        local obj = plib.path_temp_obj(path, #path)
+        local obj = Path_ct()
+        plib.path_temp_obj(path, #path, obj)
         if obj._p == 0 then
             error("String used as path which contains invalid UTF-8")
         end
@@ -238,21 +239,23 @@ end
 
 function Path:parent()
     local obj = pathify(self)
-    local new_obj = plib.path_parent(obj)
+    local new_obj = Path_ct()
+    plib.path_parent(obj, new_obj)
     if new_obj._p == 0 then
         return nil
     end
-    return Path_ct(new_obj)
+    return new_obj
 end
 
 function Path:strip_prefix(prefix)
     local obj = pathify(self)
     prefix = pathify(prefix)
-    local suffix = plib.path_strip_prefix(obj, prefix)
+    local suffix = Path_ct()
+    plib.path_strip_prefix(obj, prefix, suffix)
     if suffix._p == 0 then
         return nil
     end
-    return Path_ct(suffix)
+    return suffix
 end
 
 function Path:file_name()

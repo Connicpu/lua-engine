@@ -45,14 +45,12 @@ impl AsRef<OsStr> for PathObj {
 /// Create an empty path which can be appended onto
 #[no_mangle]
 pub unsafe extern "C"
-fn path_temp_obj(path: *const u8, len: usize) -> PathObj {
+fn path_temp_obj(path: *const u8, len: usize, output: *mut PathObj) {
     let raw = slice::from_raw_parts(path, len);
-    let path = match str::from_utf8(raw) {
-        Ok(s) => s,
-        Err(_) => return None.into(),
+    *output = match str::from_utf8(raw) {
+        Ok(s) => Path::new(s).into(),
+        Err(_) => None.into(),
     };
-
-    Path::new(path).into()
 }
 
 /// Create an empty path which can be appended onto
@@ -72,7 +70,7 @@ fn path_clone(path: *mut PathBuf) -> *mut PathBuf {
 /// Clone a path
 #[no_mangle]
 pub unsafe extern "C"
-fn path_buf_from_obj(path: PathObj) -> *mut PathBuf {
+fn path_buf_from_obj(path: &PathObj) -> *mut PathBuf {
     Box::into_raw(Box::new(PathBuf::from(&path)))
 }
 
@@ -99,7 +97,7 @@ fn path_free(path: *mut PathBuf) {
 /// Append a string to a path
 #[no_mangle]
 pub unsafe extern "C"
-fn path_push(path: *mut PathBuf, leaf: PathObj) {
+fn path_push(path: *mut PathBuf, leaf: &PathObj) {
     (*path).push(leaf);
 }
 
@@ -136,13 +134,13 @@ fn path_set_extension(path: *mut PathBuf, leaf: *const u8, len: usize) -> bool {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_buf_to_obj(buf: *const PathBuf) -> PathObj {
-    (*buf).as_path().into()
+fn path_buf_to_obj(buf: *const PathBuf, output: *mut PathObj) {
+    *output = (*buf).as_path().into()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_to_str(path: PathObj, len: *mut usize) -> *const u8 {
+fn path_to_str(path: &PathObj, len: *mut usize) -> *const u8 {
     let path = match (*path).to_str() {
         Some(p) => p,
         None => return ptr::null(),
@@ -154,67 +152,67 @@ fn path_to_str(path: PathObj, len: *mut usize) -> *const u8 {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_is_absolute(path: PathObj) -> bool {
+fn path_is_absolute(path: &PathObj) -> bool {
     path.is_absolute().into()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_is_relative(path: PathObj) -> bool {
+fn path_is_relative(path: &PathObj) -> bool {
     path.is_relative().into()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_has_root(path: PathObj) -> bool {
+fn path_has_root(path: &PathObj) -> bool {
     path.has_root().into()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_starts_with(path: PathObj, start: PathObj) -> bool {
+fn path_starts_with(path: &PathObj, start: &PathObj) -> bool {
     path.starts_with(start)
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_ends_with(path: PathObj, end: PathObj) -> bool {
+fn path_ends_with(path: &PathObj, end: &PathObj) -> bool {
     path.ends_with(end)
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_exists(path: PathObj) -> bool {
+fn path_exists(path: &PathObj) -> bool {
     path.exists()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_is_file(path: PathObj) -> bool {
+fn path_is_file(path: &PathObj) -> bool {
     path.is_file()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_is_dir(path: PathObj) -> bool {
+fn path_is_dir(path: &PathObj) -> bool {
     path.is_dir()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_parent(path: PathObj) -> PathObj {
-    path.parent().into()
+fn path_parent(path: &PathObj, output: *mut PathObj) {
+    *output = path.parent().into();
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_strip_prefix(path: PathObj, prefix: PathObj) -> PathObj {
-    path.strip_prefix(&prefix).ok().into()
+fn path_strip_prefix(path: &PathObj, prefix: &PathObj, output: *mut PathObj) {
+    *output = path.strip_prefix(&prefix).ok().into()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_file_name(path: PathObj, len: *mut usize) -> *const u8 {
+fn path_file_name(path: &PathObj, len: *mut usize) -> *const u8 {
     let name = match path.file_name().and_then(OsStr::to_str) {
         Some(n) => n.as_bytes(),
         None => return ptr::null(),
@@ -226,7 +224,7 @@ fn path_file_name(path: PathObj, len: *mut usize) -> *const u8 {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_file_stem(path: PathObj, len: *mut usize) -> *const u8 {
+fn path_file_stem(path: &PathObj, len: *mut usize) -> *const u8 {
     let stem = match path.file_stem().and_then(OsStr::to_str) {
         Some(n) => n.as_bytes(),
         None => return ptr::null(),
@@ -238,7 +236,7 @@ fn path_file_stem(path: PathObj, len: *mut usize) -> *const u8 {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_extension(path: PathObj, len: *mut usize) -> *const u8 {
+fn path_extension(path: &PathObj, len: *mut usize) -> *const u8 {
     let ext = match path.extension().and_then(OsStr::to_str) {
         Some(n) => n.as_bytes(),
         None => return ptr::null(),
@@ -250,13 +248,13 @@ fn path_extension(path: PathObj, len: *mut usize) -> *const u8 {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_join(left: PathObj, right: PathObj) -> *mut PathBuf {
+fn path_join(left: &PathObj, right: &PathObj) -> *mut PathBuf {
     Box::into_raw(Box::new(left.join(right)))
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_with_file_name(path: PathObj, leaf: *const u8, len: usize) -> *mut PathBuf {
+fn path_with_file_name(path: &PathObj, leaf: *const u8, len: usize) -> *mut PathBuf {
     let raw = slice::from_raw_parts(leaf, len);
     let leaf = match str::from_utf8(raw) {
         Ok(s) => s,
@@ -268,7 +266,7 @@ fn path_with_file_name(path: PathObj, leaf: *const u8, len: usize) -> *mut PathB
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_with_extension(path: PathObj, leaf: *const u8, len: usize) -> *mut PathBuf {
+fn path_with_extension(path: &PathObj, leaf: *const u8, len: usize) -> *mut PathBuf {
     let raw = slice::from_raw_parts(leaf, len);
     let leaf = match str::from_utf8(raw) {
         Ok(s) => s,
@@ -280,7 +278,7 @@ fn path_with_extension(path: PathObj, leaf: *const u8, len: usize) -> *mut PathB
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_canonicalize(path: PathObj) -> *mut PathBuf {
+fn path_canonicalize(path: &PathObj) -> *mut PathBuf {
     match path.canonicalize() {
         Ok(path) => Box::into_raw(Box::new(path)),
         Err(_) => ptr::null_mut(),
@@ -289,7 +287,7 @@ fn path_canonicalize(path: PathObj) -> *mut PathBuf {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_read_link(path: PathObj) -> *mut PathBuf {
+fn path_read_link(path: &PathObj) -> *mut PathBuf {
     match path.read_link() {
         Ok(path) => Box::into_raw(Box::new(path)),
         Err(_) => ptr::null_mut(),
@@ -298,56 +296,56 @@ fn path_read_link(path: PathObj) -> *mut PathBuf {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_copy(from: PathObj, to: PathObj) -> u64 {
+fn path_copy(from: &PathObj, to: &PathObj) -> u64 {
     fs::copy(from, to).unwrap_or(std::u64::MAX)
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_create_dir(path: PathObj) -> bool {
+fn path_create_dir(path: &PathObj) -> bool {
     fs::create_dir(path).is_ok()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_create_dir_all(path: PathObj) -> bool {
+fn path_create_dir_all(path: &PathObj) -> bool {
     fs::create_dir_all(path).is_ok()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_remove_dir(path: PathObj) -> bool {
+fn path_remove_dir(path: &PathObj) -> bool {
     fs::remove_dir(path).is_ok()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_remove_dir_all(path: PathObj) -> bool {
+fn path_remove_dir_all(path: &PathObj) -> bool {
     fs::remove_dir_all(path).is_ok()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_remove_file(path: PathObj) -> bool {
+fn path_remove_file(path: &PathObj) -> bool {
     fs::remove_file(path).is_ok()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_rename(from: PathObj, to: PathObj) -> bool {
+fn path_rename(from: &PathObj, to: &PathObj) -> bool {
     fs::rename(from, to).is_ok()
 }
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_hard_link(src: PathObj, dst: PathObj) -> bool {
+fn path_hard_link(src: &PathObj, dst: &PathObj) -> bool {
     fs::hard_link(src, dst).is_ok()
 }
 
 #[cfg(windows)]
 #[no_mangle]
 pub unsafe extern "C"
-fn path_symlink_file(src: PathObj, dst: PathObj) -> bool {
+fn path_symlink_file(src: &PathObj, dst: &PathObj) -> bool {
     use std::os::windows::fs::symlink_file;
     symlink_file(src, dst).is_ok()
 }
@@ -355,7 +353,7 @@ fn path_symlink_file(src: PathObj, dst: PathObj) -> bool {
 #[cfg(windows)]
 #[no_mangle]
 pub unsafe extern "C"
-fn path_symlink_dir(src: PathObj, dst: PathObj) -> bool {
+fn path_symlink_dir(src: &PathObj, dst: &PathObj) -> bool {
     use std::os::windows::fs::symlink_dir;
     symlink_dir(src, dst).is_ok()
 }
@@ -363,7 +361,7 @@ fn path_symlink_dir(src: PathObj, dst: PathObj) -> bool {
 #[cfg(unix)]
 #[no_mangle]
 pub unsafe extern "C"
-fn path_symlink_file(src: PathObj, dst: PathObj) -> bool {
+fn path_symlink_file(src: &PathObj, dst: &PathObj) -> bool {
     use std::os::unix::fs::symlink;
     symlink(src, dst).is_ok()
 }
@@ -371,7 +369,7 @@ fn path_symlink_file(src: PathObj, dst: PathObj) -> bool {
 #[cfg(unix)]
 #[no_mangle]
 pub unsafe extern "C"
-fn path_symlink_dir(src: PathObj, dst: PathObj) -> bool {
+fn path_symlink_dir(src: &PathObj, dst: &PathObj) -> bool {
     use std::os::unix::fs::symlink;
     symlink(src, dst).is_ok()
 }
@@ -389,7 +387,7 @@ pub enum MetaFileType {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_metadata(path: PathObj) -> *mut Metadata {
+fn path_metadata(path: &PathObj) -> *mut Metadata {
     match path.metadata() {
         Ok(meta) => Box::into_raw(Box::new(meta)),
         Err(_) => ptr::null_mut(),
@@ -398,7 +396,7 @@ fn path_metadata(path: PathObj) -> *mut Metadata {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_symlink_metadata(path: PathObj) -> *mut Metadata {
+fn path_symlink_metadata(path: &PathObj) -> *mut Metadata {
     match path.symlink_metadata() {
         Ok(meta) => Box::into_raw(Box::new(meta)),
         Err(_) => ptr::null_mut(),
@@ -480,7 +478,7 @@ fn path_free_metadata(meta: *mut Metadata) {
 
 #[no_mangle]
 pub unsafe extern "C"
-fn path_read_dir(path: PathObj) -> *mut ReadDir {
+fn path_read_dir(path: &PathObj) -> *mut ReadDir {
     match path.read_dir() {
         Ok(rd) => Box::into_raw(Box::new(rd)),
         Err(_) => ptr::null_mut()

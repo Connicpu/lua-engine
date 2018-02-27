@@ -44,15 +44,15 @@ Push-Location src\native-helpers\path-helper
 rustup run $Rust64 cargo clean
 rustup run $Rust64 cargo build --release
 Pop-Location
-Copy-Item -Path ".\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x64\Debug"
-Copy-Item -Path ".\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x64\Release"
-Copy-Item -Path ".\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x64\Deploy"
+Copy-Item -Path "..\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x64\Debug"
+Copy-Item -Path "..\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x64\Release"
+Copy-Item -Path "..\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x64\Deploy"
 
 # x86
 Push-Location src\native-helpers\path-helper
 rustup run $Rust32 cargo clean
 rustup run $Rust32 cargo build --release
 Pop-Location
-Copy-Item -Path ".\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x86\Debug"
-Copy-Item -Path ".\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x86\Release"
-Copy-Item -Path ".\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x86\Deploy"
+Copy-Item -Path "..\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x86\Debug"
+Copy-Item -Path "..\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x86\Release"
+Copy-Item -Path "..\src\native-helpers\path-helper\target\release\path_helper.*" -Destination "bin\windows\x86\Deploy"

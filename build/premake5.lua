@@ -1,6 +1,6 @@
 workspace "lua-engine"
-    objdir "../obj/%{cfg.system}/%{prj.name}/%{cfg.platform}/%{cfg.buildcfg}"
-    targetdir "../bin/%{cfg.system}/%{cfg.platform}/%{cfg.buildcfg}"
+    objdir "obj/%{cfg.system}/%{prj.name}/%{cfg.platform}/%{cfg.buildcfg}"
+    targetdir "bin/%{cfg.system}/%{cfg.platform}/%{cfg.buildcfg}"
     pic "On"
     warnings "Extra"
     cppdialect "C++17"

@@ -1,15 +1,15 @@
 #import "platform.h"
 
-@class CNNRTextureArray;
+@class CNTextureArray;
 
-@interface CNNRDevice : NSObject
+@interface CNDevice : NSObject
 
 @property (readonly) id<MTLDevice> device;
 
 -(void)startCommands;
 -(void)useNormalShader;
 -(void)usePixelArtShader;
--(void)setTexture:(CNNRTextureArray *)array;
+-(void)setTexture:(CNTextureArray *)array;
 -(void)drawWithInstances:(id<MTLBuffer>)instances;
 -(void)commitCommands;
 

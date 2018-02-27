@@ -1,7 +1,7 @@
-#import "CNNRCamera.h"
-#import "CNNRDevice.h"
+#import "CNCamera.h"
+#import "CNDevice.h"
 
-@implementation CNNRCamera
+@implementation CNCamera
 {
     id<MTLBuffer> _cam_buffer;
     bool _updated;
@@ -51,18 +51,18 @@
 
 camera *rd_create_camera()
 {
-    auto cam = [CNNRCamera new];
+    auto cam = [CNCamera new];
     return from_objc<camera>(cam);
 }
 
 void rd_free_camera(camera *cam)
 {
-    drop(into_objc<CNNRCamera>(cam));
+    drop(into_objc<CNCamera>(cam));
 }
 
 void rd_set_camera_aspect(camera *pcam, float aspect_ratio)
 {
-    auto cam = ref_objc<CNNRCamera>(pcam);
+    auto cam = ref_objc<CNCamera>(pcam);
     cam.aspect_ratio = aspect_ratio;
     [cam wasUpdated];
 }
@@ -72,7 +72,7 @@ bool rd_update_camera(camera *pcam, const matrix2d *transform)
     if (!is_invertible(*transform))
         return false;
     
-    auto cam = ref_objc<CNNRCamera>(pcam);
+    auto cam = ref_objc<CNCamera>(pcam);
     cam.transform = *transform;
     cam.cam_inverse = inverse(*transform);
     [cam wasUpdated];
@@ -81,6 +81,6 @@ bool rd_update_camera(camera *pcam, const matrix2d *transform)
 
 void rd_get_camera_transform(camera *pcam, matrix2d *transform)
 {
-    auto cam = ref_objc<CNNRCamera>(pcam);
+    auto cam = ref_objc<CNCamera>(pcam);
     *transform = cam.transform;
 }

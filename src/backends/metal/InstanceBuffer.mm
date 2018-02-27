@@ -1,5 +1,5 @@
 #import "InstanceBuffer.h"
-#import "CNNRDevice.h"
+#import "CNDevice.h"
 
 ib_state::ib_state()
 {
@@ -28,7 +28,7 @@ bool rd_ib_start_upload(device *pdev, uint32_t count, uint32_t isize, ib_state &
     if (count == 0)
         return set_error_and_ret(false, "Cannot create an instance buffer of size 0");
 
-    auto dev = ref_objc<CNNRDevice>(pdev);
+    auto dev = ref_objc<CNDevice>(pdev);
 
     if (should_resize(count, state))
     {

@@ -1,4 +1,4 @@
-#import "CNNRDevice.h"
+#import "CNDevice.h"
 #import "Sprite.h"
 
 static sprite_vertex kQuadVertices[] =
@@ -12,7 +12,7 @@ static sprite_vertex kQuadVertices[] =
     { vec2{ 0.5f, 0.5f }, vec2{ 1, 0 } },
 };
 
-@implementation CNNRDevice
+@implementation CNDevice
 {
     // Device state
     id<MTLDevice> _device;
@@ -39,7 +39,7 @@ static sprite_vertex kQuadVertices[] =
     
 }
 
--(void)setTexture:(CNNRTextureArray *)array
+-(void)setTexture:(CNTextureArray *)array
 {
     drop(array);
 }
@@ -119,11 +119,11 @@ static sprite_vertex kQuadVertices[] =
 
 device *rd_create_device(const device_params *params)
 {
-    id dev = [[CNNRDevice alloc] initWithParams: params];
+    id dev = [[CNDevice alloc] initWithParams: params];
     return from_objc<device>(dev);
 }
 
 void rd_free_device(device *dev)
 {
-    drop(into_objc<CNNRDevice>(dev));
+    drop(into_objc<CNDevice>(dev));
 }

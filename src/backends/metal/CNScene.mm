@@ -1,8 +1,8 @@
-#import "CNNRScene.h"
+#import "CNScene.h"
 #import "InstanceBuffer.h"
 #import "backends/common/scene_graph.h"
 
-@implementation CNNRScene
+@implementation CNScene
 {
     scene_graph<
         sprite_object,
@@ -101,18 +101,18 @@
 scene *rd_create_scene(device *, float grid_width, float grid_height)
 {
     vec2 size = vec2{ grid_width, grid_height };
-    auto scene = [[CNNRScene alloc] initWithSize:size];
+    auto scene = [[CNScene alloc] initWithSize:size];
     return from_objc<struct scene>(scene);
 }
 
 void rd_free_scene(scene *scene)
 {
-    drop(into_objc<CNNRScene>(scene));
+    drop(into_objc<CNScene>(scene));
 }
 
 bool rd_draw_scene(device *dev, render_target *rt, scene *pscene, camera *cam, const viewport *vp)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     return [scene drawToTarget:rt
                         device:dev
                         camera:cam
@@ -121,19 +121,19 @@ bool rd_draw_scene(device *dev, render_target *rt, scene *pscene, camera *cam, c
 
 sprite_handle rd_create_sprite(scene *pscene, const sprite_params *params)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     return [scene newSpriteWithParams:params];
 }
 
 void rd_destroy_sprite(scene *pscene, sprite_handle sprite)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     [scene destroySprite:sprite];
 }
 
 void rd_get_sprite_uv(scene *pscene, sprite_handle sprite, vec2 *topleft, vec2 *bottomright)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     [scene getSpriteUv:sprite
              topLeftUv:topleft
          bottomRightUv:bottomright];
@@ -141,7 +141,7 @@ void rd_get_sprite_uv(scene *pscene, sprite_handle sprite, vec2 *topleft, vec2 *
 
 void rd_set_sprite_uv(scene *pscene, sprite_handle sprite, const vec2 *topleft, const vec2 *bottomright)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     [scene updateSprite:sprite
               topLeftUV:*topleft
           bottomRightUV:*bottomright];
@@ -149,52 +149,52 @@ void rd_set_sprite_uv(scene *pscene, sprite_handle sprite, const vec2 *topleft, 
 
 float rd_get_sprite_layer(scene *pscene, sprite_handle sprite)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     return [scene getSpriteLayer:sprite];
 }
 
 void rd_set_sprite_layer(scene *pscene, sprite_handle sprite, float layer)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     [scene updateSprite:sprite
                   layer:layer];
 }
 
 texture *rd_get_sprite_texture(scene *pscene, sprite_handle sprite)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     return [scene getSpriteTexture:sprite];
 }
 
 void rd_set_sprite_texture(scene *pscene, sprite_handle sprite, texture *tex)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     [scene updateSprite:sprite
                 texture:tex];
 }
 
 void rd_get_sprite_transform(scene *pscene, sprite_handle sprite, matrix2d *transform)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     *transform = [scene getSpriteTransform:sprite];
 }
 
 void rd_set_sprite_transform(scene *pscene, sprite_handle sprite, const matrix2d *transform)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     [scene updateSprite:sprite
               transform:*transform];
 }
 
 void rd_get_sprite_tint(scene *pscene, sprite_handle sprite, color *tint)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     *tint = [scene getSpriteTint:sprite];
 }
 
 void rd_set_sprite_tint(scene *pscene, sprite_handle sprite, const color *tint)
 {
-    auto scene = ref_objc<CNNRScene>(pscene);
+    auto scene = ref_objc<CNScene>(pscene);
     [scene updateSprite:sprite
                    tint:*tint];
 }

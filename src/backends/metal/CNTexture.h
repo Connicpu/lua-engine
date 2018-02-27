@@ -1,8 +1,8 @@
 #import "platform.h"
 
-@class CNNRDevice;
+@class CNDevice;
 
-@interface CNNRTextureArray : NSObject 
+@interface CNTextureArray : NSObject 
 
 @property bool isPixelArt;
 @property (readonly) uint32_t spriteCount;
@@ -14,14 +14,14 @@
 
 @end
 
-@interface CNNRTexture : NSObject 
+@interface CNTexture : NSObject 
 
 @property (readonly) uint32_t index;
-@property (readonly, unsafe_unretained) CNNRTextureArray *array;
+@property (readonly, unsafe_unretained) CNTextureArray *array;
 
 +(instancetype) newForIndex:(uint32_t)index
-                  withArray:(CNNRTextureArray *)array;
+                  withArray:(CNTextureArray *)array;
 -(instancetype) initForIndex:(uint32_t)index
-                   withArray:(CNNRTextureArray *)array;
+                   withArray:(CNTextureArray *)array;
 
 @end

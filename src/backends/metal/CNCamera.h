@@ -1,6 +1,6 @@
 #import "platform.h"
 
-@interface CNNRCamera : NSObject
+@interface CNCamera : NSObject
 
 @property (nonatomic) matrix2d transform;
 @property (nonatomic) matrix2d cam_inverse;

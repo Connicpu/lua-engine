@@ -1,7 +1,7 @@
 #import "platform.h"
 #import "Sprite.h"
 
-@interface CNNRScene : NSObject
+@interface CNScene : NSObject
 
 -(instancetype)initWithSize:(vec2)size;
 

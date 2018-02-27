@@ -1,10 +1,10 @@
-#import "CNNRTexture.h"
-#import "CNNRDevice.h"
+#import "CNTexture.h"
+#import "CNDevice.h"
 
-@implementation CNNRTextureArray
+@implementation CNTextureArray
 
 -(instancetype)initWithParams:(const texture_array_params *)params
-                   withDevice:(CNNRDevice *)device
+                   withDevice:(CNDevice *)device
 {
     self = [super init];
     if (self)
@@ -18,7 +18,7 @@
         auto textures = [NSMutableArray array];
         for (uint32_t i = 0; i < _spriteCount; ++i)
         {
-            auto entry = [CNNRTexture newForIndex:i
+            auto entry = [CNTexture newForIndex:i
                                         withArray:self];
             [textures addObject:entry];
         }
@@ -70,16 +70,16 @@
 
 @end
 
-@implementation CNNRTexture
+@implementation CNTexture
 
 +(instancetype) newForIndex:(uint32_t)index
-                  withArray:(CNNRTextureArray *)array
+                  withArray:(CNTextureArray *)array
 {
-    return [[CNNRTexture alloc] initForIndex:index
+    return [[CNTexture alloc] initForIndex:index
                                    withArray:array];
 }
 -(instancetype) initForIndex:(uint32_t)index
-                   withArray:(CNNRTextureArray *)array
+                   withArray:(CNTextureArray *)array
 {
     self = [super init];
     _index = index;
@@ -92,69 +92,69 @@
 texture_array *rd_create_texture_array(device *dev,
                                        const texture_array_params *params)
 {
-    auto device = ref_objc<CNNRDevice>(dev);
-    auto texture = [[CNNRTextureArray alloc] initWithParams:params
+    auto device = ref_objc<CNDevice>(dev);
+    auto texture = [[CNTextureArray alloc] initWithParams:params
                                                  withDevice:device];
     return from_objc<texture_array>(texture);
 }
 
 void rd_free_texture_array(texture_array *set)
 {
-    drop(into_objc<CNNRTextureArray>(set));
+    drop(into_objc<CNTextureArray>(set));
 }
 
 void rd_get_texture_array_size(const texture_array *set,
                                uint32_t *width,
                                uint32_t *height)
 {
-    auto texture = ref_objc<CNNRTextureArray>(set);
+    auto texture = ref_objc<CNTextureArray>(set);
     *width = texture.width;
     *height = texture.height;
 }
 
 uint32_t rd_get_texture_array_count(const texture_array *set)
 {
-    auto texture = ref_objc<CNNRTextureArray>(set);
+    auto texture = ref_objc<CNTextureArray>(set);
     return texture.spriteCount;
 }
 
 bool rd_is_texture_array_streaming(const texture_array *set)
 {
-    auto texture = ref_objc<CNNRTextureArray>(set);
+    auto texture = ref_objc<CNTextureArray>(set);
     return texture.streaming;
 }
 
 bool rd_is_texture_array_pixel_art(const texture_array *set)
 {
-    auto texture = ref_objc<CNNRTextureArray>(set);
+    auto texture = ref_objc<CNTextureArray>(set);
     return texture.isPixelArt;
 }
 
 void rd_set_texture_array_pixel_art(texture_array *set, bool pa)
 {
-    auto texture = ref_objc<CNNRTextureArray>(set);
+    auto texture = ref_objc<CNTextureArray>(set);
     texture.isPixelArt = pa;
 }
 
 texture *rd_get_texture(texture_array *set, uint32_t index)
 {
-    auto texture = ref_objc<CNNRTextureArray>(set);
+    auto texture = ref_objc<CNTextureArray>(set);
     if (index >= texture.spriteCount)
         return nullptr;
-    CNNRTexture *entry = texture.textures[index];
+    CNTexture *entry = texture.textures[index];
     return ref_objc<struct texture>(entry);
 }
 
 texture_array *rd_get_texture_array(texture *tex)
 {
-    auto texture = ref_objc<CNNRTexture>(tex);
+    auto texture = ref_objc<CNTexture>(tex);
     return ref_objc<texture_array>(texture.array);
 }
 
 bool rd_update_texture(device *, texture *tex,
                        const uint8_t *data, size_t len)
 {
-    auto texture = ref_objc<CNNRTexture>(tex);
+    auto texture = ref_objc<CNTexture>(tex);
     assert(len == texture.array.width * texture.array.height * 4);
     [texture.array updateTextureAt:texture.index withData:data];
     return true;

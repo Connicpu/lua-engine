@@ -1,19 +1,19 @@
 workspace "lua-engine"
-    objdir "obj/%{cfg.system}/%{prj.name}/%{cfg.platform}/%{cfg.buildcfg}"
-    targetdir "bin/%{cfg.system}/%{cfg.platform}/%{cfg.buildcfg}"
+    objdir "../obj/%{cfg.system}/%{prj.name}/%{cfg.platform}/%{cfg.buildcfg}"
+    targetdir "../bin/%{cfg.system}/%{cfg.platform}/%{cfg.buildcfg}"
     pic "On"
     warnings "Extra"
     cppdialect "C++17"
 
     libdirs {
-        "vendor/bin/%{cfg.system}_%{cfg.platform}",
+        "../vendor/bin/%{cfg.system}_%{cfg.platform}",
     }
 
     sysincludedirs {
-        "vendor/include",
+        "../vendor/include",
     }
     includedirs {
-        "src",
+        "../src",
     }
 
     configurations { "Debug", "Release", "Deploy" }
@@ -50,16 +50,16 @@ filter "configurations:Deploy"
 filter "action:vs*"
     defines { "NOMINMAX", "WIN32_LEAN_AND_MEAN", "_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING" }
     characterset "MBCS"
-    postbuildcommands { "powershell -NoProfile -File build/windows/postbuild.ps1" }
+    postbuildcommands { "powershell -NoProfile -File windows/postbuild.ps1" }
 
 filter "not action:vs*"
     toolset "clang"
     buildoptions { "-std=c++14" }
     if os.istarget("macosx") then
         buildoptions { "-fobjc-arc" }
-        postbuildcommands { "build/macosx/postbuild.sh" }
+        postbuildcommands { "macosx/postbuild.sh" }
     else
-        postbuildcommands { "build/linux/postbuild.sh" }
+        postbuildcommands { "linux/postbuild.sh" }
     end
 
 ---------------------------------------
@@ -70,8 +70,8 @@ project "launcher"
     language "C++"
 
     files {
-        "src/launcher/*.h",
-        "src/launcher/*.cpp"
+        "../src/launcher/*.h",
+        "../src/launcher/*.cpp"
     }
 
     filter "action:vs*"
@@ -95,22 +95,22 @@ project "launcher"
 
     filter "action:vs*"
         linkoptions {
-            "/manifestinput:src/launcher/app.manifest",
+            "/manifestinput:../src/launcher/app.manifest",
             "/entry:WinMainCRTStartup",
         }
-        files { "src/launcher/app.manifest" }
+        files { "../src/launcher/app.manifest" }
 
     filter "not action:vs*"
-        removefiles { "src/launcher/winmain.cpp" }
+        removefiles { "../src/launcher/winmain.cpp" }
 
 ---------------------------------------
 -- Backends
 
 local luajit
 if os.istarget("windows") then
-    luajit = [[%{wks.location}\vendor\bin\%{cfg.system}_%{cfg.platform}\luajit.exe]]
+    luajit = [[%{wks.location}\..\vendor\bin\%{cfg.system}_%{cfg.platform}\luajit.exe]]
 else
-    luajit = "%{wks.location}/vendor/bin/%{cfg.system}_%{cfg.platform}/luajit"
+    luajit = "%{wks.location}/../vendor/bin/%{cfg.system}_%{cfg.platform}/luajit"
 end
 
 project "rd-common"
@@ -118,13 +118,13 @@ project "rd-common"
     language "C++"
 
     files {
-        "src/backends/common/*.h",
-        "src/backends/common/*.cpp"
+        "../src/backends/common/*.h",
+        "../src/backends/common/*.cpp"
     }
 
     filter "action:vs*"
         pchheader "pch.h"
-        pchsource "src/backends/common/pch.cpp"
+        pchsource "../src/backends/common/pch.cpp"
 
 if os.istarget("windows") then
     project "win32-handler"
@@ -132,17 +132,17 @@ if os.istarget("windows") then
         language "C++"
 
         files {
-            "src/backends/win32-handler/*.h",
-            "src/backends/win32-handler/*.cpp",
+            "../src/backends/win32-handler/*.h",
+            "../src/backends/win32-handler/*.cpp",
         }
         
         pchheader "pch.h"
-        pchsource "src/backends/win32-handler/pch.cpp"
+        pchsource "../src/backends/win32-handler/pch.cpp"
 
     project "shaders-dx11"
         kind "Utility"
-        files { "src/backends/shaders/dx11/*.hlsl" }
-        prebuildcommands { luajit.." src/backends/shaders/build.lua dx11 %{cfg.objdir}" }
+        files { "../src/backends/shaders/dx11/*.hlsl" }
+        prebuildcommands { luajit.." ../src/backends/shaders/build.lua dx11 %{cfg.objdir}" }
         dependson { "rd-common" }
 
     project "rd-dx11"
@@ -151,9 +151,9 @@ if os.istarget("windows") then
 
         dependson { "shaders-dx11" }
         files {
-            "src/backends/dx11/*.h",
-            "src/backends/dx11/*.cpp",
-            "src/backends/dx11/*.def",
+            "../src/backends/dx11/*.h",
+            "../src/backends/dx11/*.cpp",
+            "../src/backends/dx11/*.def",
         }
         links {
             "dwrite",
@@ -165,7 +165,7 @@ if os.istarget("windows") then
         }
 
         pchheader "pch.h"
-        pchsource "src/backends/dx11/pch.cpp"
+        pchsource "../src/backends/dx11/pch.cpp"
 end
 
 if os.istarget("macosx") then
@@ -175,11 +175,11 @@ if os.istarget("macosx") then
         defines { "MACOS", "OBJC" }
         
         files {
-            "src/backends/metal/*.h",
-            "src/backends/metal/*.cpp",
-            "src/backends/metal/*.mm",
-            "src/backends/metal/*.m",
-            "src/backends/metal/*.metal",
+            "../src/backends/metal/*.h",
+            "../src/backends/metal/*.cpp",
+            "../src/backends/metal/*.mm",
+            "../src/backends/metal/*.m",
+            "../src/backends/metal/*.metal",
         }
         links {
             "rd-common",
@@ -194,16 +194,16 @@ if os.istarget("linux") then
         language "C++"
 
         files {
-            "src/backends/x11-handler/*.h",
-            "src/backends/x11-handler/*.cpp",
+            "../src/backends/x11-handler/*.h",
+            "../src/backends/x11-handler/*.cpp",
         }
 end
 
 if not os.istarget("macosx") then
     project "shaders-vulkan"
         kind "Utility"
-        files { "src/backends/shaders/vulkan/*.hlsl" }
-        buildcommands { luajit.." src/backends/shaders/build.lua vulkan %{cfg.objdir}" }
+        files { "../src/backends/shaders/vulkan/*.hlsl" }
+        buildcommands { luajit.." ../src/backends/shaders/build.lua vulkan %{cfg.objdir}" }
         dependson { "rd-common" }
 
     project "rd-vulkan"
@@ -212,8 +212,8 @@ if not os.istarget("macosx") then
 
         dependson { "shaders-vulkan" }
         files {
-            "src/backends/vulkan/*.h",
-            "src/backends/vulkan/*.cpp"
+            "../src/backends/vulkan/*.h",
+            "../src/backends/vulkan/*.cpp"
         }
         links {
             "rd-common"
@@ -225,9 +225,9 @@ if not os.istarget("macosx") then
             links { "x11-handler" }
 
         filter "action:vs*"
-            files { "src/backends/vulkan/*.def" }
+            files { "../src/backends/vulkan/*.def" }
             pchheader "pch.h"
-            pchsource "src/backends/vulkan/pch.cpp"
+            pchsource "../src/backends/vulkan/pch.cpp"
 end
 
 

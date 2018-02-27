@@ -15,6 +15,11 @@ namespace hashmap_details
         {
         }
 
+        V move_value()
+        {
+            return std::move(value);
+        }
+
         K key;
         V value;
         typename Hasher::result_type hash;
@@ -27,6 +32,11 @@ namespace hashmap_details
         entry(K &&key, V &&, typename Hasher::result_type hash)
             : key(key), hash(hash)
         {
+        }
+
+        bool move_value()
+        {
+            return true;
         }
 
         K key;
@@ -120,11 +130,11 @@ inline auto hashmap<K, V, Hasher>::insert(K key, value_type value) -> optional_v
 template<typename K, typename V, typename Hasher>
 inline auto hashmap<K, V, Hasher>::remove(lookup_type key) -> optional_value_type
 {
-    optional_value_type old_value;
+    optional_value_type old_value = {};
     if (auto old = lookup_index(key))
     {
         entry &e = data[*old];
-        old_value = std::move(e.value);
+        old_value = e.move_value();
         erase(*old);
     }
     return old_value;

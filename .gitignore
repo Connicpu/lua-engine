@@ -20,7 +20,7 @@ ipch/
 *.sln.docstates
 *.VC.db
 *.VC.opendb
-.vs/*
+build/.vs/*
 *.psess
 *.vsp
 *.vspx

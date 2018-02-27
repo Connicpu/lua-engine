@@ -54,3 +54,5 @@ EXPORTS
     rd_prepare_window_for_drawing
     rd_present_window
     rd_test_window_occlusion
+
+	foo

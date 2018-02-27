@@ -499,7 +499,7 @@ namespace std {
                 return TR2_OPTIONAL_ASSERTED_EXPRESSION(initialized(), dataptr());
             }
 
-            // CONNOR ADDITION :D
+            // CONNIE ADDITION :D
             std::optional<T &> as_ref()
             {
                 if (*this)
@@ -526,7 +526,7 @@ namespace std {
                     return static_cast<U &>(**this);
                 return{};
             }
-            // END CONNOR ADDITION
+            // END CONNIE ADDITION
 
 # if OPTIONAL_HAS_MOVE_ACCESSORS == 1
 

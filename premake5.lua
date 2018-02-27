@@ -3,6 +3,7 @@ workspace "lua-engine"
     targetdir "bin/%{cfg.system}/%{cfg.platform}/%{cfg.buildcfg}"
     pic "On"
     warnings "Extra"
+    cppdialect "C++17"
 
     libdirs {
         "vendor/bin/%{cfg.system}_%{cfg.platform}",
@@ -17,7 +18,7 @@ workspace "lua-engine"
 
     configurations { "Debug", "Release", "Deploy" }
 
-    if os.is("windows") then
+    if os.istarget("windows") then
         platforms { "x86", "x64" }
     else
         platforms { "x64" }
@@ -34,26 +35,27 @@ workspace "lua-engine"
 
 filter "configurations:Debug"
     defines { "DEBUG" }
-    flags { "Symbols" }
+    symbols "On"
 
 filter "configurations:Release"
     defines { "NDEBUG" }
-    flags { "Symbols" }
+    symbols "On"
     optimize "On"
 
 filter "configurations:Deploy"
     defines { "NDEBUG", "BAKED_CODE" }
+    symbols "Off"
     optimize "On"
 
 filter "action:vs*"
-    defines { "NOMINMAX", "WIN32_LEAN_AND_MEAN" }
+    defines { "NOMINMAX", "WIN32_LEAN_AND_MEAN", "_SILENCE_CXX17_CODECVT_HEADER_DEPRECATION_WARNING" }
     characterset "MBCS"
     postbuildcommands { "powershell -NoProfile -File build/windows/postbuild.ps1" }
 
 filter "not action:vs*"
     toolset "clang"
     buildoptions { "-std=c++14" }
-    if os.is("macosx") then
+    if os.istarget("macosx") then
         buildoptions { "-fobjc-arc" }
         postbuildcommands { "build/macosx/postbuild.sh" }
     else
@@ -105,7 +107,7 @@ project "launcher"
 -- Backends
 
 local luajit
-if os.is("windows") then
+if os.istarget("windows") then
     luajit = [[%{wks.location}\vendor\bin\%{cfg.system}_%{cfg.platform}\luajit.exe]]
 else
     luajit = "%{wks.location}/vendor/bin/%{cfg.system}_%{cfg.platform}/luajit"
@@ -124,7 +126,7 @@ project "rd-common"
         pchheader "pch.h"
         pchsource "src/backends/common/pch.cpp"
 
-if os.is("windows") then
+if os.istarget("windows") then
     project "win32-handler"
         kind "StaticLib"
         language "C++"
@@ -166,7 +168,7 @@ if os.is("windows") then
         pchsource "src/backends/dx11/pch.cpp"
 end
 
-if os.is("macosx") then
+if os.istarget("macosx") then
     project "rd-metal"
         kind "SharedLib"
         language "C++"
@@ -186,7 +188,7 @@ if os.is("macosx") then
         }
 end
 
-if os.is("linux") then
+if os.istarget("linux") then
     project "x11-handler"
         kind "StaticLib"
         language "C++"
@@ -197,7 +199,7 @@ if os.is("linux") then
         }
 end
 
-if not os.is("macosx") then
+if not os.istarget("macosx") then
     project "shaders-vulkan"
         kind "Utility"
         files { "src/backends/shaders/vulkan/*.hlsl" }
